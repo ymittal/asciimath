@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 import re
+import os.path
 import requests
+import logging
+import argparse
 
 ASCIIMATH_MARKUP_REGEX = r'<m>`(?P<l_ws>\s*)(?P<markup>.*?)(?P<t_ws>\s*)</m>'
 
@@ -9,6 +12,11 @@ BASE_URL = 'http://localhost:8080'
 
 
 def convertASCIIMathToLatex(markups):
+    """Converts AsciiMath markups to LaTeX
+    :param markups (str, list): AsciiMath markup(s)
+    :return (str, list): LaTeX str when a single markup
+        passed as param, otherwise a list of LaTeX markups
+    """
     if not markups:
         return []
 
@@ -24,6 +32,12 @@ def convertASCIIMathToLatex(markups):
 
 
 def preprocessBatch(doc):
+    """Deprecated. Replaces AsciiMath markup tags with those of
+    LaTeX, all using a single API call.
+    :param doc (str): document str
+    :return (str): document str with LaTeX tags
+    """
+    logging.warning('DEPRACATED -- use preprocessBatchV2()')
     pattern = re.compile(ASCIIMATH_MARKUP_REGEX, re.DOTALL)
     asciiMarkups = []
     for match in re.finditer(pattern, doc):
@@ -46,6 +60,12 @@ def preprocessBatch(doc):
 
 
 def preprocessBatchV2(doc):
+    """Replaces AsciiMath markup tags with those of LaTeX,
+    all using a single API call. Use this to minimize network
+    traffic if :param doc contains lots of AsciiMath tags.
+    :param doc (str): document str
+    :return (str): document str with LaTeX tags
+    """
     pattern = re.compile(ASCIIMATH_MARKUP_REGEX, re.DOTALL)
     asciiMarkups = []
     for match in re.finditer(pattern, doc):
@@ -63,6 +83,10 @@ def preprocessBatchV2(doc):
 
 
 def preprocessOneByOne(doc):
+    """Replaces AsciiMath tags with those of LaTeX, one by one
+    :param doc (str): document str
+    :return (str): document str with LaTeX tags
+    """
     def repl(match):
         lWs = match.group('l_ws')
         latexMarkup = convertASCIIMathToLatex(match.group('markup'))
@@ -73,14 +97,31 @@ def preprocessOneByOne(doc):
     return re.sub(pattern, repl=repl, string=doc)
 
 
-from textwrap import dedent
-print(preprocessBatchV2(dedent('''
-    Hello world
-    <m>`1+sqrt(2) </m>
-    Haha!
-    <m>{\sqrt{55}}</m>
-    <m>`
+def parse_args():
+    def does_file_exist(path):
+        if not os.path.isfile(path):
+            raise argparse.ArgumentTypeError(
+                '{} does not exist'.format(path))
+        return path
 
-        1/3
-    </m>
-''')))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-x', '--xml',
+                        help="path to XML file",
+                        required=True,
+                        type=does_file_exist)
+    args = parser.parse_args()
+    return args
+
+if __name__ == '__main__':
+    args = parse_args()
+    xml_path = args.xml
+    with open(xml_path) as xml_file:
+        logging.info('Converting AsciiMath to LaTeX...')
+        # TODO: read XML file in chunks
+        doc = xml_file.read()
+        doc = preprocessBatchV2(doc)
+
+    with open(xml_path, 'w') as output_file:
+        output_file.write(doc)
+        logging.info('Preprocessed XML saved to {}'
+                     .format(xml_path))
