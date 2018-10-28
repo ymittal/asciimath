@@ -3,11 +3,24 @@
 # sample usage:
 # ./pretext.sh -o <output_dir> <stylesheet> <xml>
 
-BASH_DIR=$(dirname "$0")
+bash_dir=$(dirname $0)
 
-STYLESHEET=${@:$#-1:1}
-XML_FILE=${@:$#}
-OTHER_ARGS=${@:1:$#-2}
+stylesheet=${@:$#-1:1}
+xml_file=${@:$#}
+other_args=${@:1:$#-2}
 
-python $BASH_DIR/replace.py --xml $XML_FILE
-xsltproc $OTHER_ARGS $STYLESHEET $XML_FILE
+xml_dir=$(dirname $xml_file)
+latex_dir=$xml_dir-latex
+cp -R $xml_dir/. $latex_dir
+
+echo "Converting AsciiMath to LaTeX for..."
+# find all files with .xml/.ptx extension
+files=$(find $latex_dir/ -name '*.xml' -o -name '*.ptx')
+for filename in $files; do
+	echo $filename
+	python $bash_dir/replace.py --xml $filename
+done
+echo "LaTeX conversion done. Output saved at $latex_dir"
+
+output_xml=$latex_dir/$(basename $xml_file)
+xsltproc $other_args $stylesheet $output_xml
