@@ -7,6 +7,7 @@ from enum import Enum, unique
 class TokenClass(Enum):
     STRING = 0
     NUMBER = 1
+    CHAR = 2
 
     # grouping brackets
     LPAR = 100          # (
@@ -113,6 +114,7 @@ class TokenClass(Enum):
     BECAUSE = 613       # :' (∵)
     PLUSMINUS = 614
     OINT = 615          # oint (∮)
+    FRAC = 616
 
     # arrows and accents
     RARR = 700          # rarr (->)
@@ -125,6 +127,14 @@ class TokenClass(Enum):
     DARR = 707          # darr (↓)
 
     EOF = 1000
+
+    @staticmethod
+    def getGreekLetters():
+        res = []
+        for token in TokenClass:
+            if 500 <= token.value < 600:
+                res.append(token)
+        return res
 
 
 class Token:
@@ -172,6 +182,7 @@ class Tokenizer:
         'QQ': TokenClass.SET_Q,
         'RR': TokenClass.SET_R,
         'ZZ': TokenClass.SET_Z,
+        'frac': TokenClass.FRAC,
 
         # Greek letters
         'alpha': TokenClass.ALPHA,
