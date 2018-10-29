@@ -1,28 +1,7 @@
-from StringIO import StringIO
 from collections import deque
 
-from tokenizer import Tokenizer
-
-
-class Scanner:
-
-    def __init__(self, string):
-        self.file = StringIO(string)
-
-    def next(self, length=1):
-        char = self.file.read(length)
-        if char:
-            return char
-        else:
-            return None
-
-    def peek(self, length=1):
-        pos = self.file.tell()
-        char = self.file.read(length)
-        if not char:
-            return None
-        self.file.seek(pos)
-        return char
+from scanner import Scanner
+from tokenizer import Tokenizer, TokenClass
 
 
 class Parser:
@@ -47,11 +26,13 @@ class Parser:
         return self.buffer[k - 1]
 
 
-string = 'a>=b**c'
+string = 'a !in B ** CC darr 2 = 2'
 tokenizer = Tokenizer(scanner=Scanner(string))
 while True:
     token = tokenizer.nextToken()
-    if (token):
-        print(token.tokenClass, token.data)
-    else:
+    if token.tokenClass == TokenClass.EOF:
         break
+    elif token and token.data:
+        print token.tokenClass, ':', token.data
+    elif token:
+        print token.tokenClass
