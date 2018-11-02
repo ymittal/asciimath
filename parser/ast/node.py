@@ -28,6 +28,17 @@ class Constant(ASTNode):
     pass
 
 
+class ConstantSymbol(Constant):
+
+    TO_LATEX = utils._getConstantSymbolsToLaTeX()
+
+    def __init__(self, tokenClass):
+        self.tokenClass = tokenClass
+
+    def __str__(self):
+        return self.TO_LATEX.get(self.tokenClass, '')
+
+
 class GreekLetter(Constant):
 
     TO_LATEX = utils._getGreekLettersToLaTeX()

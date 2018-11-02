@@ -76,6 +76,11 @@ class Parser:
             self.consumeToken()
             return node.GreekLetter(letterClass)
 
+        elif self.accept(*TokenClass.getConstants()):
+            consClass = self.token.tokenClass
+            self.consumeToken()
+            return node.ConstantSymbol(consClass)
+
         elif self.accept(TokenClass.LPAR,
                          TokenClass.LSQB,
                          TokenClass.LBRA):
@@ -141,8 +146,10 @@ class Parser:
 #     elif token:
 #         print token.tokenClass
 
-string = '(b_beta)_{5gamma}^{5Gamma}'
-tokenizer = Tokenizer(scanner=Scanner(string))
-parser = Parser(tokenizer=tokenizer)
+def convertToLaTeX(string):
+    tokenizer = Tokenizer(scanner=Scanner(string))
+    parser = Parser(tokenizer=tokenizer)
+    return str(parser.parseCode())
 
-print(parser.parseCode())
+string = 'a/(b |-> c) {f hArr 2}'
+print(convertToLaTeX(string))

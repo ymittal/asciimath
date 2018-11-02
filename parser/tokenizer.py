@@ -32,6 +32,7 @@ class TokenClass(Enum):
     SUPSETEQ = 212      # supe (⊇)
     CONGRUENCE = 213    # cong (≅)
     PROPORTIONAL = 214  # prop (∝)
+    EQUIV = 215         # ~= (≡)
 
     # logical symbols
     IMPLIES = 300       # =>
@@ -45,7 +46,7 @@ class TokenClass(Enum):
     MINUS = 401         # -
     CDOT = 402          # * (⋅)
     ASTERIX = 403       # ** (∗)
-    DIV = 404           # /
+    DIV = 404           # / (\frac{}{})
     DIV_KG = 405        # -: (÷) kindergarten divide
     SUMMATION = 406     # sum (∑)
     PROD = 407          # prod (∏)
@@ -53,6 +54,8 @@ class TokenClass(Enum):
     CUP = 409           # cup (∪)
     WEDGE = 410         # ^^ (∧)
     VEE = 411           # vv (∨)
+    TIMES = 412         # xx (×)
+    SLASH = 413         # // (/)
 
     # Greek letters (caps end with '_C')
     ALPHA = 500
@@ -122,15 +125,27 @@ class TokenClass(Enum):
     LRARR_THICK = 705   # hArr (<=>)
     UARR = 706          # uarr (↑)
     DARR = 707          # darr (↓)
+    MAPSTO = 708        # |-> (↦)
 
     EOF = 1000
 
     @staticmethod
-    def getGreekLetters():
+    def _getWithin(start, end):
         res = []
         for token in TokenClass:
-            if 500 <= token.value < 600:
+            if start <= token.value < end:
                 res.append(token)
+        return res
+
+    @staticmethod
+    def getGreekLetters():
+        return TokenClass._getWithin(500, 600)
+
+    @staticmethod
+    def getConstants():
+        res = []
+        res.extend(TokenClass._getWithin(200, 500))
+        res.extend(TokenClass._getWithin(700, 800))
         return res
 
 
@@ -151,6 +166,7 @@ class Tokenizer:
         'nn': TokenClass.CAP,
         'uu': TokenClass.CUP,
         'vv': TokenClass.VEE,
+        'xx': TokenClass.TIMES,
 
         # relational symbols
         'in': TokenClass.IN,
@@ -348,6 +364,9 @@ class Tokenizer:
             elif self.sc.peek() == '>':
                 self.sc.next()
                 return Token(TokenClass.RARR)
+            elif self.sc.peek() == '=':
+                self.sc.next()
+                return Token(TokenClass.EQUIV)
             return Token(TokenClass.MINUS)
 
         elif char == '*':
@@ -357,6 +376,9 @@ class Tokenizer:
             return Token(TokenClass.CDOT)
 
         elif char == '/':
+            if self.sc.peek() == '/':
+                self.sc.next()
+                return Token(TokenClass.SLASH)
             return Token(TokenClass.DIV)
 
         elif char == '^':
@@ -367,3 +389,10 @@ class Tokenizer:
 
         elif char == '_':
             return Token(TokenClass.UNDERSCORE)
+
+        elif char == '|':
+            if self.sc.peek() == '-':
+                self.sc.next()
+                if self.sc.peek() == '>':
+                    self.sc.next()
+                    return Token(TokenClass.MAPSTO)
