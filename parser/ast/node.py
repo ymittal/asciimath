@@ -8,7 +8,8 @@ from tokenizer import TokenClass
 # l ::= ( | [ | {
 # r ::= ) | ] | }
 # S ::= c | l Code r | uS | bSS | "any text"
-# E ::= S | S/S | S_S | S^S | S_S^S
+# I ::= S | S_S | S^S | S_S^S
+# E ::= I | I/I
 # Code ::= [ E ]
 
 
@@ -32,7 +33,7 @@ def _getGreekTokensToLaTeX():
     for letter in greekLetters:
         name = letter.name
         if name.endswith('_C'):
-            name = name[-2].capitalize()
+            name = name[:-2].capitalize()
         else:
             name = name.lower()
         res[letter] = '\\%s' % name
