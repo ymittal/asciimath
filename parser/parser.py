@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+
 from collections import deque
 
 from scanner import Scanner
@@ -37,6 +39,19 @@ class Parser:
 
         return self.buffer[k - 1]
 
+    def parseBinarySymbols(self):
+        if self.accept(TokenClass.FRAC):
+            self.nextToken()
+            numerator = self.parseSimpleExpr()
+            denominator = self.parseSimpleExpr()
+            return node.Frac(numerator, denominator)
+
+        elif self.accept(TokenClass.ROOT):
+            self.nextToken()
+            power = self.parseSimpleExpr()
+            expr = self.parseSimpleExpr()
+            return node.Root(power, expr)
+
     def parseSimpleExpr(self):
         if self.accept(TokenClass.SQRT):
             self.nextToken()
@@ -44,25 +59,77 @@ class Parser:
             return node.Sqrt(expr)
 
         elif self.accept(TokenClass.FRAC, TokenClass.ROOT):
-            tokenClass = self.token.tokenClass
-            self.nextToken()
+            return self.parseBinarySymbols()
 
-            firstExpr = self.parseSimpleExpr()
-            secondExpr = self.parseSimpleExpr()
-            if tokenClass == TokenClass.FRAC:
-                return node.Frac(firstExpr, secondExpr)
-            else:
-                return node.Root(firstExpr, secondExpr)
+        elif self.accept(TokenClass.STRING):
+            value = self.token.data
+            self.nextToken()
+            return node.String(value)
 
         elif self.accept(TokenClass.NUMBER):
-            val = self.token.data
+            value = self.token.data
             self.nextToken()
-            return node.Number(val)
+            return node.Number(value)
 
-# string = 'a !in B ** CC darr 2 = 2'
+        elif self.accept(*TokenClass.getGreekLetters()):
+            letterClass = self.token.tokenClass
+            self.nextToken()
+            return node.GreekLetter(letterClass)
+
+        elif self.accept(TokenClass.LPAR,
+                         TokenClass.LSQB,
+                         TokenClass.LBRA):
+            leftBracket = node.LeftBracket(self.token.tokenClass)
+            self.nextToken()
+            exprs = self.parseCode()
+
+            if self.accept(TokenClass.RPAR,
+                           TokenClass.RSQB,
+                           TokenClass.RBRA):
+                rightBracket = node.RightBracket(self.token.tokenClass)
+                self.nextToken()
+                return node.BracketedExpr(exprs, leftBracket, rightBracket)
+
+    def parseExpr(self):
+        simpleExpr1 = self.parseSimpleExpr()
+        if self.accept(TokenClass.DIV):
+            self.nextToken()
+            simpleExpr2 = self.parseSimpleExpr()
+            return node.Frac(simpleExpr1, simpleExpr2)
+
+        elif self.accept(TokenClass.UNDERSCORE):
+            self.nextToken()
+            simpleExpr2 = self.parseSimpleExpr()
+
+            if self.accept(TokenClass.CARAT):
+                self.nextToken()
+                simpleExpr3 = self.parseSimpleExpr()
+                return node.SubSuperscriptExpr(simpleExpr1,
+                                               simpleExpr2,
+                                               simpleExpr3)
+
+            return node.SubscriptExpr(simpleExpr1, simpleExpr2)
+
+        elif self.accept(TokenClass.CARAT):
+            self.nextToken()
+            simpleExpr2 = self.parseSimpleExpr()
+            return node.SuperscriptExpr(simpleExpr1, simpleExpr2)
+
+        return simpleExpr1
+
+    def parseCode(self):
+        exprList = []
+        expr = self.parseExpr()
+        while expr is not None:
+            exprList.append(expr)
+            expr = self.parseExpr()
+        return node.ExprList(exprList)
+
+
+# string = 'a !in B ** CC darr2 = 2+3x'
 # tokenizer = Tokenizer(scanner=Scanner(string))
 # while True:
-#     token = tokenizer.nextToken()
+#     token = tokenizer.next:Token()
 #     if token.tokenClass == TokenClass.EOF:
 #         break
 #     elif token and token.data:
@@ -70,7 +137,8 @@ class Parser:
 #     elif token:
 #         print token.tokenClass
 
-string = 'sqrt 3'
+string = '({2/3}_{4 beta}^{25 alpha}) 2/3'
 tokenizer = Tokenizer(scanner=Scanner(string))
 parser = Parser(tokenizer=tokenizer)
-print(parser.parseSimpleExpr())
+
+print(parser.parseCode())

@@ -16,10 +16,6 @@ class TokenClass(Enum):
     RSQB = 103          # ]
     LBRA = 104          # {
     RBRA = 105          # }
-    LPARCOLON = 106     # (:
-    RPARCOLON = 107     # :)
-    LBRACOLON = 108     # {:
-    RBRACOLON = 109     # :}
 
     # relational symbols
     EQUALS = 200        # =
@@ -115,6 +111,8 @@ class TokenClass(Enum):
     PLUSMINUS = 614
     OINT = 615          # oint (∮)
     FRAC = 616
+    UNDERSCORE = 617
+    CARAT = 618
 
     # arrows and accents
     RARR = 700          # rarr (->)
@@ -276,37 +274,25 @@ class Tokenizer:
                                  data=''.join(number))
 
         if char == '(':
-            if self.sc.peek() == ':':
-                self.sc.next()
-                return Token(TokenClass.LPARCOLON)
             return Token(TokenClass.LPAR)
 
         elif char == '[':
             return Token(TokenClass.LSQB)
 
         elif char == '{':
-            if self.sc.peek() == ':':
-                self.sc.next()
-                return Token(TokenClass.LBRACOLON)
             return Token(TokenClass.LBRA)
 
         elif char == ')':
             return Token(TokenClass.RPAR)
 
         elif char == ']':
-            return Token(Token.RSQB)
+            return Token(TokenClass.RSQB)
 
         elif char == '}':
             return Token(TokenClass.RBRA)
 
         elif char == ':':
-            if self.sc.peek() == ')':
-                self.sc.next()
-                return Token(TokenClass.RPARCOLON)
-            elif self.sc.peek() == '}':
-                self.sc.next()
-                return Token(TokenClass.RBRACOLON)
-            elif self.sc.peek() == '.':
+            if self.sc.peek() == '.':
                 self.sc.next()
                 return Token(TokenClass.THEREFORE)
             elif self.sc.peek() == '\'':
@@ -378,3 +364,7 @@ class Tokenizer:
             if self.sc.peek() == '^':
                 self.sc.next()
                 return Token(TokenClass.WEDGE)
+            return Token(TokenClass.CARAT)
+
+        elif char == '_':
+            return Token(TokenClass.UNDERSCORE)
