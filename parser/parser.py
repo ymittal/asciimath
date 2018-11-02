@@ -151,5 +151,5 @@ def convertToLaTeX(string):
     parser = Parser(tokenizer=tokenizer)
     return str(parser.parseCode())
 
-string = 'a/(b |-> c) {f hArr 2}'
+string = 'f |-> CC :\' x = 2 ^ 3'
 print(convertToLaTeX(string))

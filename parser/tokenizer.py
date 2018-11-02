@@ -145,7 +145,7 @@ class TokenClass(Enum):
     def getConstants():
         res = []
         res.extend(TokenClass._getWithin(200, 500))
-        res.extend(TokenClass._getWithin(700, 800))
+        res.extend(TokenClass._getWithin(600, 800))
         return res
 
 
@@ -391,8 +391,6 @@ class Tokenizer:
             return Token(TokenClass.UNDERSCORE)
 
         elif char == '|':
-            if self.sc.peek() == '-':
-                self.sc.next()
-                if self.sc.peek() == '>':
-                    self.sc.next()
-                    return Token(TokenClass.MAPSTO)
+            if self.sc.peek(length=2) == '->':
+                self.sc.next(length=2)
+                return Token(TokenClass.MAPSTO)
