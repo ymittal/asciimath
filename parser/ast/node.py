@@ -13,7 +13,13 @@ from tokenizer import TokenClass
 
 
 class ASTNode:
-    pass
+
+    @staticmethod
+    def trimBrackets(expr):
+        if isinstance(expr, BracketedExpr):
+            return expr.exprs
+        else:
+            return expr
 
 
 class Constant(ASTNode):
@@ -67,7 +73,7 @@ class String(Constant):
 class UnarySymbol(ASTNode):
 
     def __init__(self, expr):
-        self.expr = expr
+        self.expr = self.trimBrackets(expr)
 
 
 class Sqrt(UnarySymbol):
@@ -79,8 +85,8 @@ class Sqrt(UnarySymbol):
 class BinSymbol(ASTNode):
 
     def __init__(self, first, second):
-        self.first = first
-        self.second = second
+        self.first = self.trimBrackets(first)
+        self.second = self.trimBrackets(second)
 
 
 class Root(BinSymbol):
@@ -98,13 +104,7 @@ class Frac(BinSymbol):
 
 
 class Expr(ASTNode):
-
-    @staticmethod
-    def trimBrackets(expr):
-        if isinstance(expr, BracketedExpr):
-            return expr.exprs
-        else:
-            return expr
+    pass
 
 
 class BracketedExpr(Expr):

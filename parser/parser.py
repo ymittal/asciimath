@@ -90,14 +90,9 @@ class Parser:
                 self.nextToken()
                 return node.BracketedExpr(exprs, leftBracket, rightBracket)
 
-    def parseExpr(self):
+    def parseIntermediateExpr(self):
         simpleExpr1 = self.parseSimpleExpr()
-        if self.accept(TokenClass.DIV):
-            self.nextToken()
-            simpleExpr2 = self.parseSimpleExpr()
-            return node.Frac(simpleExpr1, simpleExpr2)
-
-        elif self.accept(TokenClass.UNDERSCORE):
+        if self.accept(TokenClass.UNDERSCORE):
             self.nextToken()
             simpleExpr2 = self.parseSimpleExpr()
 
@@ -116,6 +111,15 @@ class Parser:
             return node.SuperscriptExpr(simpleExpr1, simpleExpr2)
 
         return simpleExpr1
+
+    def parseExpr(self):
+        imdExpr1 = self.parseIntermediateExpr()
+        if self.accept(TokenClass.DIV):
+            self.nextToken()
+            imdExpr2 = self.parseIntermediateExpr()
+            return node.Frac(imdExpr1, imdExpr2)
+
+        return imdExpr1
 
     def parseCode(self):
         exprList = []
@@ -137,7 +141,7 @@ class Parser:
 #     elif token:
 #         print token.tokenClass
 
-string = '({2/3}_{4 beta}^{25 alpha}) 2/3'
+string = '(2_alpha) a/b'
 tokenizer = Tokenizer(scanner=Scanner(string))
 parser = Parser(tokenizer=tokenizer)
 
