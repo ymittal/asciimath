@@ -7,7 +7,6 @@ from enum import Enum, unique
 class TokenClass(Enum):
     STRING = 0
     NUMBER = 1
-    CHAR = 2
 
     # grouping brackets
     LPAR = 100          # (

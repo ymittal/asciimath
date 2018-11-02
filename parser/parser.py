@@ -16,7 +16,7 @@ class Parser:
         self.buffer = deque()
 
         self.token = None
-        self.nextToken()
+        self.consumeToken()
 
     def accept(self, *args):
         res = False
@@ -24,7 +24,7 @@ class Parser:
             res |= (self.token.tokenClass == arg)
         return res
 
-    def nextToken(self):
+    def consumeToken(self):
         if len(self.buffer):
             self.token = self.buffer.popleft()
         else:
@@ -41,20 +41,20 @@ class Parser:
 
     def parseBinarySymbols(self):
         if self.accept(TokenClass.FRAC):
-            self.nextToken()
+            self.consumeToken()
             numerator = self.parseSimpleExpr()
             denominator = self.parseSimpleExpr()
             return node.Frac(numerator, denominator)
 
         elif self.accept(TokenClass.ROOT):
-            self.nextToken()
+            self.consumeToken()
             power = self.parseSimpleExpr()
             expr = self.parseSimpleExpr()
             return node.Root(power, expr)
 
     def parseSimpleExpr(self):
         if self.accept(TokenClass.SQRT):
-            self.nextToken()
+            self.consumeToken()
             expr = self.parseSimpleExpr()
             return node.Sqrt(expr)
 
@@ -63,41 +63,41 @@ class Parser:
 
         elif self.accept(TokenClass.STRING):
             value = self.token.data
-            self.nextToken()
+            self.consumeToken()
             return node.String(value)
 
         elif self.accept(TokenClass.NUMBER):
             value = self.token.data
-            self.nextToken()
+            self.consumeToken()
             return node.Number(value)
 
         elif self.accept(*TokenClass.getGreekLetters()):
             letterClass = self.token.tokenClass
-            self.nextToken()
+            self.consumeToken()
             return node.GreekLetter(letterClass)
 
         elif self.accept(TokenClass.LPAR,
                          TokenClass.LSQB,
                          TokenClass.LBRA):
-            leftBracket = node.LeftBracket(self.token.tokenClass)
-            self.nextToken()
+            lBracket = node.LeftBracket(self.token.tokenClass)
+            self.consumeToken()
             exprs = self.parseCode()
 
             if self.accept(TokenClass.RPAR,
                            TokenClass.RSQB,
                            TokenClass.RBRA):
-                rightBracket = node.RightBracket(self.token.tokenClass)
-                self.nextToken()
-                return node.BracketedExpr(exprs, leftBracket, rightBracket)
+                rBracket = node.RightBracket(self.token.tokenClass)
+                self.consumeToken()
+                return node.BracketedExpr(exprs, lBracket, rBracket)
 
     def parseIntermediateExpr(self):
         simpleExpr1 = self.parseSimpleExpr()
         if self.accept(TokenClass.UNDERSCORE):
-            self.nextToken()
+            self.consumeToken()
             simpleExpr2 = self.parseSimpleExpr()
 
             if self.accept(TokenClass.CARAT):
-                self.nextToken()
+                self.consumeToken()
                 simpleExpr3 = self.parseSimpleExpr()
                 return node.SubSuperscriptExpr(simpleExpr1,
                                                simpleExpr2,
@@ -106,7 +106,7 @@ class Parser:
             return node.SubscriptExpr(simpleExpr1, simpleExpr2)
 
         elif self.accept(TokenClass.CARAT):
-            self.nextToken()
+            self.consumeToken()
             simpleExpr2 = self.parseSimpleExpr()
             return node.SuperscriptExpr(simpleExpr1, simpleExpr2)
 
@@ -115,7 +115,7 @@ class Parser:
     def parseExpr(self):
         imdExpr1 = self.parseIntermediateExpr()
         if self.accept(TokenClass.DIV):
-            self.nextToken()
+            self.consumeToken()
             imdExpr2 = self.parseIntermediateExpr()
             return node.Frac(imdExpr1, imdExpr2)
 
@@ -141,7 +141,7 @@ class Parser:
 #     elif token:
 #         print token.tokenClass
 
-string = '(2_alpha) a/b'
+string = '(b_beta)_{5gamma}^{5Gamma}'
 tokenizer = Tokenizer(scanner=Scanner(string))
 parser = Parser(tokenizer=tokenizer)
 

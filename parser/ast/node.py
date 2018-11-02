@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from tokenizer import TokenClass
+import utils
 
 # c ::= [a-zA-Z] | numbers | greek letters | standard functions | , | other symbols (see list)
 # u ::= sqrt | text | bb | bbb | cc | tt | fr | sf | hat | bar | ul | vec | dot | ddot
@@ -16,7 +17,7 @@ from tokenizer import TokenClass
 class ASTNode:
 
     @staticmethod
-    def trimBrackets(expr):
+    def stripBrackets(expr):
         if isinstance(expr, BracketedExpr):
             return expr.exprs
         else:
@@ -27,30 +28,15 @@ class Constant(ASTNode):
     pass
 
 
-def _getGreekTokensToLaTeX():
-    greekLetters = TokenClass.getGreekLetters()
-    res = {}
-    for letter in greekLetters:
-        name = letter.name
-        if name.endswith('_C'):
-            name = name[:-2].capitalize()
-        else:
-            name = name.lower()
-        res[letter] = '\\%s' % name
-
-    return res
-
-
 class GreekLetter(Constant):
 
-    # TODO: add all letters
-    TOKEN_CLASS_TO_LATEX = _getGreekTokensToLaTeX()
+    TO_LATEX = utils._getGreekLettersToLaTeX()
 
-    def __init__(self, letterClass):
-        self.letterClass = letterClass
+    def __init__(self, tokenClass):
+        self.tokenClass = tokenClass
 
     def __str__(self):
-        return self.TOKEN_CLASS_TO_LATEX.get(self.letterClass, '')
+        return self.TO_LATEX.get(self.tokenClass, '')
 
 
 class Number(Constant):
@@ -71,37 +57,37 @@ class String(Constant):
         return str(self.val)
 
 
-class UnarySymbol(ASTNode):
+class UnaryOp(ASTNode):
 
     def __init__(self, expr):
-        self.expr = self.trimBrackets(expr)
+        self.expr = self.stripBrackets(expr)
 
 
-class Sqrt(UnarySymbol):
+class Sqrt(UnaryOp):
 
     def __str__(self):
         return '\\sqrt{%s}' % str(self.expr)
 
 
-class BinSymbol(ASTNode):
+class BinaryOp(ASTNode):
 
-    def __init__(self, first, second):
-        self.first = self.trimBrackets(first)
-        self.second = self.trimBrackets(second)
-
-
-class Root(BinSymbol):
-
-    def __str__(self):
-        return '\\sqrt[%s]{%s}' % (str(self.first),
-                                   str(self.second))
+    def __init__(self, expr1, expr2):
+        self.expr1 = self.stripBrackets(expr1)
+        self.expr2 = self.stripBrackets(expr2)
 
 
-class Frac(BinSymbol):
+class Root(BinaryOp):
 
     def __str__(self):
-        return '\\frac{%s}{%s}' % (str(self.first),
-                                   str(self.second))
+        return '\\sqrt[%s]{%s}' % (str(self.expr1),
+                                   str(self.expr2))
+
+
+class Frac(BinaryOp):
+
+    def __str__(self):
+        return '\\frac{%s}{%s}' % (str(self.expr1),
+                                   str(self.expr2))
 
 
 class Expr(ASTNode):
@@ -110,22 +96,22 @@ class Expr(ASTNode):
 
 class BracketedExpr(Expr):
 
-    def __init__(self, exprs, leftBracket, rightBracket):
+    def __init__(self, exprs, lBracket, rBracket):
         self.exprs = exprs
-        self.leftBracket = leftBracket
-        self.rightBracket = rightBracket
+        self.lBracket = lBracket
+        self.rBracket = rBracket
 
     def __str__(self):
-        return ' %s%s%s ' % (str(self.leftBracket),
+        return ' %s%s%s ' % (str(self.lBracket),
                              str(self.exprs),
-                             str(self.rightBracket))
+                             str(self.rBracket))
 
 
 class SuperscriptExpr(Expr):
 
     def __init__(self, expr, power):
         self.expr = expr
-        self.power = self.trimBrackets(power)
+        self.power = self.stripBrackets(power)
 
     def __str__(self):
         return '%s^{%s}' % (str(self.expr),
@@ -136,7 +122,7 @@ class SubscriptExpr(Expr):
 
     def __init__(self, expr, sub):
         self.expr = expr
-        self.sub = self.trimBrackets(sub)
+        self.sub = self.stripBrackets(sub)
 
     def __str__(self):
         return '%s_{%s}' % (str(self.expr),
@@ -147,8 +133,8 @@ class SubSuperscriptExpr(Expr):
 
     def __init__(self, expr, sub, sup):
         self.expr = expr
-        self.sub = self.trimBrackets(sub)
-        self.sup = self.trimBrackets(sup)
+        self.sub = self.stripBrackets(sub)
+        self.sup = self.stripBrackets(sup)
 
     def __str__(self):
         return '%s_{%s}^{%s}' % (str(self.expr),
@@ -158,32 +144,32 @@ class SubSuperscriptExpr(Expr):
 
 class Bracket(ASTNode):
 
-    def __init__(self, bracketClass):
-        self.bracketClass = bracketClass
+    def __init__(self, tokenClass):
+        self.tokenClass = tokenClass
 
 
 class LeftBracket(Bracket):
 
-    TOKEN_CLASS_TO_LATEX = {
+    TO_LATEX = {
         TokenClass.LPAR: '\\left(',
         TokenClass.LSQB: '\\left[',
         TokenClass.LBRA: '\\left\\{'
     }
 
     def __str__(self):
-        return self.TOKEN_CLASS_TO_LATEX.get(self.bracketClass, '')
+        return self.TO_LATEX.get(self.tokenClass, '')
 
 
 class RightBracket(Bracket):
 
-    TOKEN_CLASS_TO_LATEX = {
+    TO_LATEX = {
         TokenClass.RPAR: '\\right)',
         TokenClass.RSQB: '\\right]',
         TokenClass.RBRA: '\\right\\}'
     }
 
     def __str__(self):
-        return self.TOKEN_CLASS_TO_LATEX.get(self.bracketClass, '')
+        return self.TO_LATEX.get(self.tokenClass, '')
 
 
 class ExprList(ASTNode):
