@@ -23,7 +23,7 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.PLUS: '+',
         TokenClass.MINUS: '-',
         TokenClass.CDOT: '\\cdot',
-        TokenClass.ASTERIX: '\\astr',
+        TokenClass.ASTERIX: '\\ast',
         TokenClass.DIV: '/',
         TokenClass.DIV_KG: '\\div',
         TokenClass.SUMMATION: '\\sum',
