@@ -33,6 +33,10 @@ class TokenClass(Enum):
     CONGRUENCE = 213    # cong (≅)
     PROPORTIONAL = 214  # prop (∝)
     EQUIV = 215         # ~= (≡)
+    NOTSUBSET = 216
+    NOTSUPSET = 217
+    NOTSUBSETEQ = 218
+    NOTSUPSETEQ = 219
 
     # logical symbols
     IMPLIES = 300       # =>
@@ -324,9 +328,18 @@ class Tokenizer:
             if self.sc.peek() == '=':
                 self.sc.next()
                 return Token(TokenClass.NE)
-            elif self.sc.peek(length=2) == 'in':
-                self.sc.next(length=2)
-                return Token(TokenClass.NOTIN)
+            else:
+                # TODO: fails when ! is followed by a token unaccounted for
+                nextToken = self.nextToken()
+                notTokensMap = {
+                    TokenClass.IN: TokenClass.NOTIN,
+                    TokenClass.SUBSET: TokenClass.NOTSUBSET,
+                    TokenClass.SUPSET: TokenClass.NOTSUPSET,
+                    TokenClass.SUBSETEQ: TokenClass.NOTSUBSETEQ,
+                    TokenClass.SUPSETEQ: TokenClass.NOTSUPSETEQ
+                }
+                if nextToken.tokenClass in notTokensMap:
+                    return Token(notTokensMap[nextToken.tokenClass])
 
         elif char == '<':
             if self.sc.peek() == '=':

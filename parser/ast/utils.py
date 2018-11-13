@@ -52,6 +52,10 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.CONGRUENCE: '\\cong',
         TokenClass.PROPORTIONAL: '\\propto',
         TokenClass.EQUIV: '\\equiv',
+        TokenClass.NOTSUBSET: '\\not\\subset',
+        TokenClass.NOTSUPSET: '\\not\\supset',
+        TokenClass.NOTSUBSETEQ: '\\nsubseteq',
+        TokenClass.NOTSUPSETEQ: '\\nsupseteq',
 
         # logical symbols
         TokenClass.IMPLIES: '\\implies',
