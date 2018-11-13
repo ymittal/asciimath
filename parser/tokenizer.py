@@ -60,6 +60,7 @@ class TokenClass(Enum):
     VEE = 411           # vv (∨)
     TIMES = 412         # xx (×)
     SLASH = 413         # // (/)
+    LIMIT = 414         # lim
 
     # Greek letters (caps end with '_C')
     ALPHA = 500
@@ -167,6 +168,7 @@ class Tokenizer:
         # operations
         'sum': TokenClass.SUMMATION,
         'prod': TokenClass.PROD,
+        'lim': TokenClass.LIMIT,
         'nn': TokenClass.CAP,
         'uu': TokenClass.CUP,
         'vv': TokenClass.VEE,

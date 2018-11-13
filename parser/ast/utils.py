@@ -34,6 +34,7 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.VEE: '\\vee',
         TokenClass.TIMES: '\\times',
         TokenClass.SLASH: '/',
+        TokenClass.LIMIT: '\\lim',
 
         # relational symbols
         TokenClass.EQUALS: '=',
