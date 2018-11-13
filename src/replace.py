@@ -97,8 +97,8 @@ def preprocessOneByOne(doc):
     return re.sub(pattern, repl=repl, string=doc)
 
 
-def parse_args():
-    def does_file_exist(path):
+def parseArgs():
+    def doesFileExist(path):
         if not os.path.isfile(path):
             raise argparse.ArgumentTypeError(
                 '{} does not exist'.format(path))
@@ -108,12 +108,12 @@ def parse_args():
     parser.add_argument('-x', '--xml',
                         help="path to XML file",
                         required=True,
-                        type=does_file_exist)
+                        type=doesFileExist)
     args = parser.parse_args()
     return args
 
 if __name__ == '__main__':
-    args = parse_args()
+    args = parseArgs()
     xml_path = args.xml
     with open(xml_path) as xml_file:
         logging.info('Converting AsciiMath to LaTeX...')
