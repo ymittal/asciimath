@@ -23,6 +23,9 @@ class ASTNode:
         else:
             return expr
 
+    def resizeBrackets(self):
+        return False
+
 
 class Constant(ASTNode):
     pass
@@ -37,6 +40,9 @@ class ConstantSymbol(Constant):
 
     def __str__(self):
         return self.TO_LATEX.get(self.tokenClass, '')
+
+    def resizeBrackets(self):
+        return self.tokenClass in utils._getConstantSymbolsWithResizedBrackets()
 
 
 class GreekLetter(Constant):
@@ -79,6 +85,9 @@ class Sqrt(UnaryOp):
     def __str__(self):
         return '\\sqrt{%s}' % str(self.expr)
 
+    def resizeBrackets(self):
+        return self.expr.resizeBrackets()
+
 
 class BinaryOp(ASTNode):
 
@@ -93,12 +102,18 @@ class Root(BinaryOp):
         return '\\sqrt[%s]{%s}' % (str(self.expr1),
                                    str(self.expr2))
 
+    def resizeBrackets(self):
+        return self.expr1.resizeBrackets() or self.expr2.resizeBrackets()
+
 
 class Frac(BinaryOp):
 
     def __str__(self):
         return '\\frac{%s}{%s}' % (str(self.expr1),
                                    str(self.expr2))
+
+    def resizeBrackets(self):
+        return True
 
 
 class Expr(ASTNode):
@@ -112,10 +127,14 @@ class BracketedExpr(Expr):
         self.lBracket = lBracket
         self.rBracket = rBracket
 
+    def resizeBrackets(self):
+        return self.exprs.resizeBrackets()
+
     def __str__(self):
-        return ' %s%s%s ' % (str(self.lBracket),
+        resize = self.resizeBrackets()
+        return ' %s%s%s ' % (self.lBracket.__str__(resize=resize),
                              str(self.exprs),
-                             str(self.rBracket))
+                             self.rBracket.__str__(resize=resize))
 
 
 class SuperscriptExpr(Expr):
@@ -128,6 +147,9 @@ class SuperscriptExpr(Expr):
         return '%s^{%s}' % (str(self.expr),
                             str(self.power))
 
+    def resizeBrackets(self):
+        return True
+
 
 class SubscriptExpr(Expr):
 
@@ -138,6 +160,9 @@ class SubscriptExpr(Expr):
     def __str__(self):
         return '%s_{%s}' % (str(self.expr),
                             str(self.sub))
+
+    def resizeBrackets(self):
+        return True
 
 
 class SubSuperscriptExpr(Expr):
@@ -152,6 +177,9 @@ class SubSuperscriptExpr(Expr):
                                  str(self.sub),
                                  str(self.sup))
 
+    def resizeBrackets(self):
+        return True
+
 
 class Bracket(ASTNode):
 
@@ -162,25 +190,27 @@ class Bracket(ASTNode):
 class LeftBracket(Bracket):
 
     TO_LATEX = {
-        TokenClass.LPAR: '\\left(',
-        TokenClass.LSQB: '\\left[',
-        TokenClass.LBRA: '\\left\\{'
+        TokenClass.LPAR: ('\\left(', '('),
+        TokenClass.LSQB: ('\\left[', '['),
+        TokenClass.LBRA: ('\\left\\{', '\\{')
     }
 
-    def __str__(self):
-        return self.TO_LATEX.get(self.tokenClass, '')
+    def __str__(self, resize=False):
+        large, small = self.TO_LATEX.get(self.tokenClass, ('', ''))
+        return large if resize else small
 
 
 class RightBracket(Bracket):
 
     TO_LATEX = {
-        TokenClass.RPAR: '\\right)',
-        TokenClass.RSQB: '\\right]',
-        TokenClass.RBRA: '\\right\\}'
+        TokenClass.RPAR: ('\\right)', ')'),
+        TokenClass.RSQB: ('\\right]', ']'),
+        TokenClass.RBRA: ('\\right\\}', '\\}')
     }
 
-    def __str__(self):
-        return self.TO_LATEX.get(self.tokenClass, '')
+    def __str__(self, resize=False):
+        large, small = self.TO_LATEX.get(self.tokenClass, ('', ''))
+        return large if resize else small
 
 
 class ExprList(ASTNode):
@@ -190,3 +220,9 @@ class ExprList(ASTNode):
 
     def __str__(self):
         return ' '.join([str(e) for e in self.exprs])
+
+    def resizeBrackets(self):
+        for expr in self.exprs:
+            if expr.resizeBrackets():
+                return True
+        return False

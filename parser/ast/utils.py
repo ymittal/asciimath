@@ -97,3 +97,16 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.DARR: '\\downarrow',
         TokenClass.MAPSTO: '\\mapsto'
     }
+
+
+def _getConstantSymbolsWithResizedBrackets():
+    return {
+        # operations
+        TokenClass.SUMMATION,
+        TokenClass.PROD,
+        TokenClass.LIMIT,
+
+        # miscellaneous
+        TokenClass.INTEGRAL,
+        TokenClass.OINT
+    }
