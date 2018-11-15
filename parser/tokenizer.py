@@ -382,6 +382,19 @@ class Tokenizer:
             elif self.sc.peek() == '=':
                 self.sc.next()
                 return Token(TokenClass.EQUIV)
+            else:
+                number = []
+                while True:
+                    nextChar = self.sc.peek()
+                    if nextChar and nextChar.isdigit():
+                        self.sc.next()
+                        number.append(nextChar)
+                    else:
+                        break
+                if number:
+                    return Token(TokenClass.NUMBER,
+                                 data='-' + ''.join(number))
+
             return Token(TokenClass.MINUS)
 
         elif char == '*':
