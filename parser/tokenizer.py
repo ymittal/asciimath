@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from enum import Enum, unique
-
+from collections import deque
 
 @unique
 class TokenClass(Enum):
@@ -253,14 +253,20 @@ class Tokenizer:
 
     def __init__(self, scanner):
         self.sc = scanner
+        self.charsBuffer = deque()
 
     def getStringToken(self, string):
         if string in Tokenizer.STRING_TOKEN_MAP:
             return Token(Tokenizer.STRING_TOKEN_MAP[string])
-        return Token(TokenClass.STRING, data=string)
+            
+        for char in string:
+            self.charsBuffer.append(Token(TokenClass.STRING, data=char))
+        return self.charsBuffer.popleft()
 
     def nextToken(self):
         try:
+            if len(self.charsBuffer):
+                return self.charsBuffer.popleft()
             return self.next()
         except EOFError:
             return Token(TokenClass.EOF)

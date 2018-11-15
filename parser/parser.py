@@ -151,5 +151,5 @@ def convertToLaTeX(string):
     parser = Parser(tokenizer=tokenizer)
     return str(parser.parseCode())
 
-string = 'f |-> CC :\' x = 2 ^ 3'
+string = 'e^xy + yx^e'
 print(convertToLaTeX(string))
