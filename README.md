@@ -9,14 +9,14 @@ Please install **Python 2.7** and [`xsltproc`](https://mathbook.pugetsound.edu/d
 Clone this repository. Then, clone **mathbook** repository to access `PreTeXt` source, including a sample book and article.
 ```shell
 $ git clone https://github.com/ymittal/asciimath
-$ git clone https://github.com/rbeezer/mathbook
 $ cd asciimath
+$ git clone https://github.com/rbeezer/mathbook
 $ virtualenv .env && source .env/bin/activate   # (optional) setup virtualenv
 $ pip install -r requirements.txt               # setup pip dependencies
 $ chmod +x pretext.sh
 ```
 
-Run this command to convert AsciiMath markup, written as ``<m>`{asciimath}</m>`` in `<XML>`, to LaTeX and execute `xsltproc` with any arguments specified after `./pretext.sh`.
+Run this command to convert AsciiMath markup, written as ``<m>`asciimath</m>`` in `<XML>`, to LaTeX and execute `xsltproc` with any arguments specified after `./pretext.sh`.
 ```shell
 $ ./pretext.sh -o <output_dir> <STYLESHEET> <XML>
 ```
@@ -42,4 +42,4 @@ $ python replace.py --xml samples/asciimath.xml
 
 ## Contact
 
-Please feel free to contact [Yash Mittal](yashmittal2009@gmail.com) or [create an issue](https://github.com/ymittal/codeshare/issues/new) if you have questions regarding this project.
+Please feel free to contact [Yash Mittal](mailto:yashmittal2009@gmail.com) or [create an issue](https://github.com/ymittal/codeshare/issues/new) if you have questions regarding this project.
