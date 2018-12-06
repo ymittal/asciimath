@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-import sys
-
 from collections import deque
 
+from ast import node
 from scanner import Scanner
 from tokenizer import Tokenizer, TokenClass
-from ast import node
 
 
 class Parser:
@@ -135,21 +133,12 @@ class Parser:
         return node.ExprList(exprList)
 
 
-# string = 'a !in B ** CC darr2 = 2+3x'
-# tokenizer = Tokenizer(scanner=Scanner(string))
-# while True:
-#     token = tokenizer.next:Token()
-#     if token.tokenClass == TokenClass.EOF:
-#         break
-#     elif token and token.data:
-#         print token.tokenClass, ':', token.data
-#     elif token:
-#         print token.tokenClass
-
 def convertToLaTeX(string):
     tokenizer = Tokenizer(scanner=Scanner(string))
     parser = Parser(tokenizer=tokenizer)
     return str(parser.parseCode())
 
-string = 'e^xy + yx^e'
-print(convertToLaTeX(string))
+
+if __name__ == '__main__':
+    string = 'e^xy + yx^e'
+    print(convertToLaTeX(string))

@@ -1,6 +1,6 @@
 #!/usr/env/bin python
 
-from tokenizer import TokenClass
+from parser.tokenizer import TokenClass
 
 
 def _getGreekLettersToLaTeX():

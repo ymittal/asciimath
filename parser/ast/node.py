@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from tokenizer import TokenClass
+from parser.tokenizer import TokenClass
 import utils
 
 # c ::= [a-zA-Z] | numbers | greek letters | standard functions | , | other symbols (see list)
