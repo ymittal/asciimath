@@ -16,7 +16,7 @@ $ pip install -r requirements.txt               # setup pip dependencies
 $ chmod +x pretext.sh
 ```
 
-Run this command to convert AsciiMath markup, written as ``<m>`asciimath</m>`` in `<XML>`, to LaTeX and execute `xsltproc` with any arguments specified after `./pretext.sh`.
+Run this command to convert AsciiMath markup, written as ``<m>`asciimath goes here</m>`` in `<XML>`, to LaTeX and execute `xsltproc` with any arguments specified after `./pretext.sh`.
 ```shell
 $ ./pretext.sh -o <output_dir> <STYLESHEET> <XML>
 ```
