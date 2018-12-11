@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <mathbook>
-    <article xml:id="hello-world">
-		<p>Hello, World!</p>
-		
-		<m>`sqrt(2) + root 3 2</m>
-		
-		<p>Such sample, much wow</p>
-		
-		<!-- Following is already LaTeX, perhaps
-		replace.py script was used on this file
-		earlier. This tag will remain unchanged -->
-		<m>\sqrt{5}</m>
-		
-		<!-- Whitespace is preserved. -->
-		<m>`
-			(1/3)_x^y
- 		</m>
-    </article>
+  <article xml:id="hello-world">
+    <p>Hello, World!</p>
+
+    <p>
+      Here is an AsciiMath formula,
+      <m>`sqrt(2) + root 3 2</m>,
+      immediately followed by an equivalent formula in <tex/>:
+      <m>\sqrt{2} + \sqrt[3]{2}</m>.
+    </p>
+
+    <p>Such sample, much wow!</p>
+
+    <p>
+      The first sentence contains AsciiMath and the second contains the
+      same content in <latex/>.
+      <ol>
+        <li><p>
+          Apples <m>`d/(dx) x^10</m> oranges <m>`lim_(x->oo) 1/x = 0</m>
+          pears <!-- Whitespace is preserved. -->
+          <m>`
+            (1/3)_x^y
+          </m>
+          lemons <m>`2 x^3/y^33 <=  e^(x^2)</m>.
+         </p></li>
+
+         <li><p>
+          Apples <m>\frac{d}{dx} x^{10}</m> oranges <m>\lim_{x\to\infty} \frac1x = 0</m> 
+          pears <!-- Whitespace is preserved. -->
+          <m>  
+            \left(\frac13\right)_x^y   
+          </m>
+          lemons <m>2\frac{x^3}{y^{33}} \le e^{x^2}</m>.
+         </p></li>
+       </ol>
+      </p>
+  </article>
 </mathbook>
