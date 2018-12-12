@@ -26,7 +26,7 @@ Check [this](http://xmlsoft.org/XSLT/xsltproc.html) for `xsltproc` documentation
 
 The following command converts AsciiMath markup in files under `samples/asciimath.xml`, stores new XML files to `mathbook/examples/hello-world-latex` folder and generates HTML files into `generated-html/` folder using `xsltproc`.
 ```shell
-$ ./pretext.sh -o generated-html/ mathbook/xsl/mathbook-html.xsl samples/asciimath.xml 
+$ ./pretext.sh -o generated-html/ mathbook/xsl/mathbook-html.xsl samples/asciimath.xml
 ```
 
 **Notes**:
