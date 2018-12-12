@@ -24,18 +24,18 @@ Check [this](http://xmlsoft.org/XSLT/xsltproc.html) for `xsltproc` documentation
 
 ### Example
 
-The following command converts AsciiMath markup in files under `samples/asciimath.xml`, stores new XML files to `mathbook/examples/hello-world-latex` folder and generates HTML files into `generated-html/` folder using `xsltproc`.
+The following command converts AsciiMath markup in files in `samples` folder, stores new XML files to `samples-latex` folder and generates HTML files into `generated-html` folder using `xsltproc`.
 ```shell
 $ ./pretext.sh -o generated-html/ mathbook/xsl/mathbook-html.xsl samples/asciimath.xml
 ```
 
 **Notes**:
-- Files in `examples/hello-world` remain unchanged lest the `pretext.sh` script unexpectedly modify your book's source code.
-- AsciiMath to LaTeX conversion is done only on files with `.xml`, `.ptx` extensions in `examples/hello-world`. Rest of the files are copied to `examples/hello-world-latex` as is.
+- Files in `samples` remain unchanged lest the `pretext.sh` script unexpectedly modify the source XML.
+- AsciiMath to LaTeX conversion is done only on files with `.xml`, `.ptx` extensions in `samples`. Rest of the files are copied to `samples-latex` as is.
 
 ### Sample AsciiMath XML
 
-You can use `replace.py` script to check the AsciiMath to LaTeX conversion on a single XML file.
+Additionally, you can use `replace.py` script to check the AsciiMath to LaTeX conversion on a single XML file.
 ```shell
 $ python replace.py --xml samples/asciimath.xml
 ```
