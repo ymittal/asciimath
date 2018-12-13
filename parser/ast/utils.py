@@ -38,9 +38,9 @@ def _getConstantSymbolsToLaTeX():
 
         # relational symbols
         TokenClass.EQUALS: '=',
-        TokenClass.LT: '<',
+        TokenClass.LT: '\\lt',
         TokenClass.LE: '\\le',
-        TokenClass.GT: '>',
+        TokenClass.GT: '\\gt',
         TokenClass.GE: '\\ge',
         TokenClass.NE: '\\ne',
         TokenClass.APPROX: '\\approx',
