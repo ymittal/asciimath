@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
-import os
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-
-from tokenizer import TokenClass
 import utils
+from src.tokenizer import TokenClass
+
 
 # c ::= [a-zA-Z] | numbers | greek letters | standard functions | , | other symbols (see list)
 # u ::= sqrt | text | bb | bbb | cc | tt | fr | sf | hat | bar | ul | vec | dot | ddot

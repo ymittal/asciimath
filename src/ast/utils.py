@@ -1,10 +1,6 @@
 #!/usr/env/bin python
 
-import os
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-
-from tokenizer import TokenClass
+from src.tokenizer import TokenClass
 
 
 def _getGreekLettersToLaTeX():
