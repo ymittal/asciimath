@@ -258,7 +258,7 @@ class Tokenizer:
     def getStringToken(self, string):
         if string in Tokenizer.STRING_TOKEN_MAP:
             return Token(Tokenizer.STRING_TOKEN_MAP[string])
-            
+
         for char in string:
             self.charsBuffer.append(Token(TokenClass.STRING, data=char))
         return self.charsBuffer.popleft()

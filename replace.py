@@ -5,7 +5,7 @@ import logging
 import os.path
 import re
 
-from parser.parser import convertToLaTeX
+from src.parser import convertToLaTeX
 
 ASCIIMATH_MARKUP_REGEX = r'<m>`(?P<l_ws>\s*)(?P<markup>.*?)(?P<t_ws>\s*)</m>'
 
