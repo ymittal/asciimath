@@ -99,7 +99,33 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.LRARR_THICK: '\\Leftrightarrow',
         TokenClass.UARR: '\\uparrow',
         TokenClass.DARR: '\\downarrow',
-        TokenClass.MAPSTO: '\\mapsto'
+        TokenClass.MAPSTO: '\\mapsto',
+
+        # standard functions
+        TokenClass.SIN: '\\sin',
+        TokenClass.COS: '\\cos',
+        TokenClass.TAN: '\\tan',
+        TokenClass.SEC: '\\sec',
+        TokenClass.CSC: '\\csc',
+        TokenClass.COT: '\\cot',
+        TokenClass.ARCSIN: '\\arcsin',
+        TokenClass.ARCCOS: '\\arccos',
+        TokenClass.ARCTAN: '\\arctan',
+        TokenClass.SINH: '\\sinh',
+        TokenClass.COSH: '\\cosh',
+        TokenClass.TANH: '\\tanh',
+        TokenClass.EXP: '\\exp',
+        TokenClass.LOG: '\\log',
+        TokenClass.LN: '\\ln',
+        TokenClass.DET: '\\det',
+        TokenClass.DIM: '\\dim',
+        TokenClass.MOD: '\\mod',
+        TokenClass.GCD: '\\gcd',
+        TokenClass.LCM: '\\text{lcm}',
+        TokenClass.MIN: '\\min',
+        TokenClass.MAX: '\\max',
+        TokenClass.F: 'f',
+        TokenClass.G: 'g',
     }
 
 

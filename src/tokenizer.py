@@ -132,6 +132,37 @@ class TokenClass(Enum):
     DARR = 707          # darr (↓)
     MAPSTO = 708        # |-> (↦)
 
+    # standard functions
+    SIN = 800
+    COS = 801
+    TAN = 802
+    SEC = 803
+    CSC = 804
+    COT = 805
+    ARCSIN = 806
+    ARCCOS = 807
+    ARCTAN = 808
+    SINH = 809
+    COSH = 810
+    TANH = 811
+    # SECH = 812
+    # CSCH = 812
+    # COTH = 813
+    EXP = 814
+    LOG = 815
+    LN = 816
+    DET = 817
+    DIM = 818
+    MOD = 819
+    GCD = 820
+    LCM = 821
+    # LUB = 822
+    # GLB = 823
+    MIN = 824
+    MAX = 825
+    F = 826
+    G = 827
+
     EOF = 1000
 
     @staticmethod
@@ -150,7 +181,7 @@ class TokenClass(Enum):
     def getConstants():
         res = []
         res.extend(TokenClass._getWithin(200, 500))
-        res.extend(TokenClass._getWithin(600, 800))
+        res.extend(TokenClass._getWithin(600, 900))
         return res
 
 
@@ -249,6 +280,32 @@ class Tokenizer:
         'lArr': TokenClass.LARR_THICK,
         'rArr': TokenClass.RARR_THICK,
         'hArr': TokenClass.LRARR_THICK,
+
+        # standard functions
+        'sin': TokenClass.SIN,
+        'cos': TokenClass.COS,
+        'tan': TokenClass.TAN,
+        'sec': TokenClass.SEC,
+        'csc': TokenClass.CSC,
+        'cot': TokenClass.COT,
+        'arcsin': TokenClass.ARCSIN,
+        'arccos': TokenClass.ARCCOS,
+        'arctan': TokenClass.ARCTAN,
+        'sinh': TokenClass.SINH,
+        'cosh': TokenClass.COSH,
+        'tanh': TokenClass.TANH,
+        'exp': TokenClass.EXP,
+        'log': TokenClass.LOG,
+        'ln': TokenClass.LN,
+        'det': TokenClass.DET,
+        'dim': TokenClass.DIM,
+        'mod': TokenClass.MOD,
+        'gcd': TokenClass.GCD,
+        'lcm': TokenClass.LCM,
+        'min': TokenClass.MIN,
+        'max': TokenClass.MAX,
+        'f': TokenClass.F,
+        'g': TokenClass.G
     }
 
     def __init__(self, scanner):
