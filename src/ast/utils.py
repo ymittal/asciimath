@@ -59,8 +59,8 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.EQUIV: '\\equiv',
         TokenClass.NOTSUBSET: '\\not\\subset',
         TokenClass.NOTSUPSET: '\\not\\supset',
-        TokenClass.NOTSUBSETEQ: '\\nsubseteq',
-        TokenClass.NOTSUPSETEQ: '\\nsupseteq',
+        TokenClass.NOTSUBSETEQ: '\\subsetneq',
+        TokenClass.NOTSUPSETEQ: '\\supsetneq',
 
         # logical symbols
         TokenClass.IMPLIES: '\\implies',
