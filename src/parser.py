@@ -93,6 +93,11 @@ class Parser:
                 self.consumeToken()
                 return node.BracketedExpr(exprs, lBracket, rBracket)
 
+        elif self.accept(TokenClass.INVALID):
+            value = self.token.data
+            self.consumeToken()
+            return node.Invalid(value)
+
     def parseIntermediateExpr(self):
         simpleExpr1 = self.parseSimpleExpr()
         if self.accept(TokenClass.UNDERSCORE):

@@ -37,6 +37,8 @@ class TokenClass(Enum):
     NOTSUPSET = 217
     NOTSUBSETEQ = 218
     NOTSUPSETEQ = 219
+    NOTEQUIV = 220      # !~= (≢)
+    SIM = 221           # ~
 
     # logical symbols
     IMPLIES = 300       # =>
@@ -120,6 +122,7 @@ class TokenClass(Enum):
     FRAC = 616
     UNDERSCORE = 617
     CARAT = 618
+    MINUSPLUS = 619
 
     # arrows and accents
     RARR = 700          # rarr (->)
@@ -164,6 +167,7 @@ class TokenClass(Enum):
     G = 827
 
     EOF = 1000
+    INVALID = 1001
 
     @staticmethod
     def _getWithin(start, end):
@@ -393,6 +397,9 @@ class Tokenizer:
             if self.sc.peek() == '=':
                 self.sc.next()
                 return Token(TokenClass.NE)
+            elif self.sc.peek(length=2) == '~=':
+                self.sc.next(length=2)
+                return Token(TokenClass.NOTEQUIV)
             else:
                 # TODO: fails when ! is followed by a token unaccounted for
                 nextToken = self.nextToken()
@@ -428,6 +435,7 @@ class Tokenizer:
             elif self.sc.peek() == '=':
                 self.sc.next()
                 return Token(TokenClass.CONGRUENCE)
+            return Token(TokenClass.SIM)
 
         if char == '+':
             if self.sc.peek() == '-':
@@ -445,6 +453,9 @@ class Tokenizer:
             elif self.sc.peek() == '=':
                 self.sc.next()
                 return Token(TokenClass.EQUIV)
+            elif self.sc.peek() == '+':
+                self.sc.next()
+                return Token(TokenClass.MINUSPLUS)
             else:
                 number = []
                 while True:
@@ -485,3 +496,5 @@ class Tokenizer:
             if self.sc.peek(length=2) == '->':
                 self.sc.next(length=2)
                 return Token(TokenClass.MAPSTO)
+
+        return Token(TokenClass.INVALID, data=char)

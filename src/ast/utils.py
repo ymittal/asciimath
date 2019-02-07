@@ -57,6 +57,8 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.NOTSUPSET: '\\not\\supset',
         TokenClass.NOTSUBSETEQ: '\\subsetneq',
         TokenClass.NOTSUPSETEQ: '\\supsetneq',
+        TokenClass.NOTEQUIV: '\\not\\equiv',
+        TokenClass.SIM: '\\sim',
 
         # logical symbols
         TokenClass.IMPLIES: '\\implies',
@@ -85,6 +87,7 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.FRAC: '/',
         TokenClass.UNDERSCORE: '\\_',
         TokenClass.CARAT: '\\hat{}',
+        TokenClass.MINUSPLUS: '\\mp',
 
         # arrows and accents
         TokenClass.RARR: '\\rightarrow',

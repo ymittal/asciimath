@@ -27,6 +27,13 @@ class ASTNode:
     def resizeBrackets(self):
         return False
 
+class Invalid(ASTNode):
+
+    def __init__(self, val):
+        self.val = val
+
+    def __str__(self):
+        return str(self.val)
 
 class Constant(ASTNode):
     pass
