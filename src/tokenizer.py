@@ -3,6 +3,7 @@
 from enum import Enum, unique
 from collections import deque
 
+
 @unique
 class TokenClass(Enum):
     STRING = 0
@@ -169,8 +170,13 @@ class TokenClass(Enum):
     # multiple line
     MULTILINE = 900
     END = 901
-    IF = 902
-    CASES = 920
+    CASES = 902
+
+    IF = 950
+    BECAUSE = 951
+    UNLESS = 952
+    PROVIDED = 953
+    OTHERWISE = 954
 
     EOF = 1000
     INVALID = 1001
@@ -193,6 +199,14 @@ class TokenClass(Enum):
         res.extend(TokenClass._getWithin(200, 500))
         res.extend(TokenClass._getWithin(600, 900))
         return res
+
+    @staticmethod
+    def getRelationalOps():
+        return TokenClass._getWithin(200, 300)
+
+    @staticmethod
+    def getExplanations():
+        return TokenClass._getWithin(950, 1000)
 
 
 class Token:
@@ -320,8 +334,13 @@ class Tokenizer:
         # multiline and cases
         'multiline': TokenClass.MULTILINE,
         'end': TokenClass.END,
-        'if': TokenClass.IF,
         'cases': TokenClass.CASES,
+
+        'if': TokenClass.IF,
+        'because': TokenClass.BECAUSE,
+        'unless': TokenClass.UNLESS,
+        'provided': TokenClass.PROVIDED,
+        'otherwise': TokenClass.OTHERWISE
     }
 
     def __init__(self, scanner):

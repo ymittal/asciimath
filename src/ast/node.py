@@ -259,11 +259,13 @@ class Multiline(ASTNode):
 class Cases(ASTNode):
 
     def __init__(self, lines):
-        for line in lines:
+        self.lines = []
+        for _l in lines:
+            line = filter(lambda e: e != Multiline.RHS_BEGIN, _l)
             for idx, expr in enumerate(line):
                 if expr == Multiline.EXPLAIN_BEGIN:
                     line[idx] = String('&&')
-        self.lines = map(lambda l: ExprList(l), lines)
+            self.lines.append(ExprList(line))
 
     def __str__(self):
         res = []

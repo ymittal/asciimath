@@ -51,23 +51,27 @@ class Parser:
             return node.Root(power, expr)
 
     def parseLines(self, separator):
-        lines, currLine = [], []
-        # TODO: complete lists of ops
+        lines = []
+        currLine, rhsSeen, explainSeen = [], False, False
         while not self.accept(TokenClass.END):
             if self.accept(separator.tokenClass):
                 lines.append(currLine)
                 self.consumeToken()
-                currLine = list()
-            elif self.accept(TokenClass.EQUALS):
+                currLine, rhsSeen, explainSeen = [], False, False
+            elif (not rhsSeen
+                  and self.accept(*TokenClass.getRelationalOps())):
                 consClass = self.token.tokenClass
                 self.consumeToken()
+                rhsSeen = True
                 currLine.extend([
                     node.Multiline.RHS_BEGIN,
                     node.ConstantSymbol(consClass)
                 ])
-            elif self.accept(TokenClass.IF):
+            elif (not explainSeen
+                  and self.accept(*TokenClass.getExplanations())):
                 textClass = self.token.tokenClass
                 self.consumeToken()
+                explainSeen = True
                 currLine.extend([
                     node.Multiline.EXPLAIN_BEGIN,
                     node.Text(textClass)
@@ -203,5 +207,5 @@ def convertToLaTeX(string):
 
 
 if __name__ == '__main__':
-    string = 'cases(;) x if x > 0; -x if x <= 0;end'
+    string = 'multiline(;) x in Y if x > oo; x !in Y uu Z otherwise;end'
     print(convertToLaTeX(string))
