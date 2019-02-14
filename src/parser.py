@@ -50,16 +50,24 @@ class Parser:
             expr = self.parseSimpleExpr()
             return node.Root(power, expr)
 
-    def parseLines(self, separator):
+    def _parseLines(self, separator):
+        """Parse lines for multi-line commands (multiline,
+        cases)
+        :param separator line delimiter token
+        :return list of lines, each containing a list of
+            parsed expressions
+        """
         lines = []
-        currLine, rhsSeen, explainSeen = [], False, False
+        currLine = []
+        rhsSeen, explanSeen = False, False
         while not self.accept(TokenClass.END):
             if self.accept(separator.tokenClass):
                 lines.append(currLine)
                 self.consumeToken()
-                currLine, rhsSeen, explainSeen = [], False, False
-            elif (not rhsSeen
-                  and self.accept(*TokenClass.getRelationalOps())):
+                currLine = []
+                rhsSeen, explanSeen = False, False
+            elif (self.accept(*TokenClass.getRelationalOps())
+                  and not rhsSeen):
                 consClass = self.token.tokenClass
                 self.consumeToken()
                 rhsSeen = True
@@ -67,11 +75,11 @@ class Parser:
                     node.MultipleLineCmd.RHS_BEGIN,
                     node.ConstantSymbol(consClass)
                 ])
-            elif (not explainSeen
-                  and self.accept(*TokenClass.getExplanations())):
+            elif (self.accept(*TokenClass.getExplanations())
+                  and not explanSeen):
                 textClass = self.token.tokenClass
                 self.consumeToken()
-                explainSeen = True
+                explanSeen = True
                 currLine.extend([
                     node.MultipleLineCmd.EXPLAIN_BEGIN,
                     node.Text(textClass)
@@ -83,6 +91,9 @@ class Parser:
         return lines
 
     def parseMultiline(self):
+        """Parse Multiline command
+            multiline(sep) [[E]* relOp [E]* explan [E]* sep]* end
+        """
         if self.accept(TokenClass.MULTILINE):
             self.consumeToken()
             if self.accept(TokenClass.LPAR):
@@ -91,10 +102,13 @@ class Parser:
                 self.consumeToken()
                 if self.accept(TokenClass.RPAR):
                     self.consumeToken()
-                    lines = self.parseLines(sep)
+                    lines = self._parseLines(sep)
                     return node.Multiline(lines)
 
     def parseCases(self):
+        """Parses Cases command
+            cases(sep) [[E]* explan [E]* sep]* end
+        """
         if self.accept(TokenClass.CASES):
             self.consumeToken()
             if self.accept(TokenClass.LPAR):
@@ -103,7 +117,7 @@ class Parser:
                 self.consumeToken()
                 if self.accept(TokenClass.RPAR):
                     self.consumeToken()
-                    lines = self.parseLines(sep)
+                    lines = self._parseLines(sep)
                     return node.Cases(lines)
 
     def parseSimpleExpr(self):

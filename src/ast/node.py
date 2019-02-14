@@ -5,13 +5,15 @@ from src.tokenizer import TokenClass
 
 
 # c ::= [a-zA-Z] | numbers | greek letters | standard functions | , | other symbols (see list)
-# u ::= sqrt | text | bb | bbb | cc | tt | fr | sf | hat | bar | ul | vec | dot | ddot
-# b ::= frac | root | stackrel
+# u ::= sqrt
+# b ::= frac | root
 # l ::= ( | [ | {
 # r ::= ) | ] | }
-# S ::= c | l Code r | uS | bSS | "any text"
+# S ::= c | l Code r | uS | bSS | multi | cases
 # I ::= S | S_S | S^S | S_S^S
 # E ::= I | I/I
+# multi ::= multiline \(sep\) [[E] rel [E] explan [E] sep]* end
+# cases ::= cases \(sep\) [[E] explan [E] sep]* end
 # Code ::= [ E ]
 
 
@@ -241,13 +243,13 @@ class MultipleLineCmd(ASTNode):
 class Multiline(MultipleLineCmd):
 
     def __init__(self, lines):
-        # map @param lines to ExprLists
         for line in lines:
             for idx, expr in enumerate(line):
                 if expr == MultipleLineCmd.RHS_BEGIN:
                     line[idx] = String('&')
                 elif expr == MultipleLineCmd.EXPLAIN_BEGIN:
                     line[idx] = String('&&')
+        # map @param lines to ExprLists
         self.lines = map(lambda l: ExprList(l), lines)
 
     def __str__(self):
@@ -264,6 +266,7 @@ class Cases(MultipleLineCmd):
     def __init__(self, lines):
         self.lines = []
         for _l in lines:
+            # remove RHS_BEGIN(s) from each line
             line = filter(lambda e: e != MultipleLineCmd.RHS_BEGIN, _l)
             for idx, expr in enumerate(line):
                 if expr == MultipleLineCmd.EXPLAIN_BEGIN:
