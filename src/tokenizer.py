@@ -32,12 +32,12 @@ class TokenClass(Enum):
     SUPSETEQ = 212      # supe (⊇)
     CONGRUENCE = 213    # cong (≅)
     PROPORTIONAL = 214  # prop (∝)
-    EQUIV = 215         # ~= (≡)
+    EQUIV = 215         # -= (≡)
     NOTSUBSET = 216
     NOTSUPSET = 217
     NOTSUBSETEQ = 218
     NOTSUPSETEQ = 219
-    NOTEQUIV = 220      # !~= (≢)
+    NOTEQUIV = 220      # !-= (≢)
     SIM = 221           # ~
 
     # logical symbols
@@ -165,6 +165,12 @@ class TokenClass(Enum):
     MAX = 825
     F = 826
     G = 827
+
+    # multiple line
+    MULTILINE = 900
+    END = 901
+    IF = 902
+    CASES = 920
 
     EOF = 1000
     INVALID = 1001
@@ -309,7 +315,13 @@ class Tokenizer:
         'min': TokenClass.MIN,
         'max': TokenClass.MAX,
         'f': TokenClass.F,
-        'g': TokenClass.G
+        'g': TokenClass.G,
+
+        # multiline and cases
+        'multiline': TokenClass.MULTILINE,
+        'end': TokenClass.END,
+        'if': TokenClass.IF,
+        'cases': TokenClass.CASES,
     }
 
     def __init__(self, scanner):
@@ -397,7 +409,7 @@ class Tokenizer:
             if self.sc.peek() == '=':
                 self.sc.next()
                 return Token(TokenClass.NE)
-            elif self.sc.peek(length=2) == '~=':
+            elif self.sc.peek(length=2) == '-=':
                 self.sc.next(length=2)
                 return Token(TokenClass.NOTEQUIV)
             else:

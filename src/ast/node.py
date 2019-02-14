@@ -15,7 +15,7 @@ from src.tokenizer import TokenClass
 # Code ::= [ E ]
 
 
-class ASTNode:
+class ASTNode(object):
 
     @staticmethod
     def stripBrackets(expr):
@@ -27,6 +27,7 @@ class ASTNode:
     def resizeBrackets(self):
         return False
 
+
 class Invalid(ASTNode):
 
     def __init__(self, val):
@@ -34,6 +35,7 @@ class Invalid(ASTNode):
 
     def __str__(self):
         return str(self.val)
+
 
 class Constant(ASTNode):
     pass
@@ -80,6 +82,15 @@ class String(Constant):
 
     def __str__(self):
         return str(self.val)
+
+
+class Text(Constant):
+
+    def __init__(self, tokenClass):
+        self.tokenClass = tokenClass
+
+    def __str__(self):
+        return '\\text{%s }' % str(self.tokenClass.name.lower())
 
 
 class UnaryOp(ASTNode):
@@ -219,6 +230,48 @@ class RightBracket(Bracket):
     def __str__(self, resize=False):
         large, small = self.TO_LATEX.get(self.tokenClass, ('', ''))
         return large if resize else small
+
+
+class Multiline(ASTNode):
+
+    RHS_BEGIN = 'RHS_BEGIN'
+    EXPLAIN_BEGIN = 'EXPLAIN_BEGIN'
+
+    def __init__(self, lines):
+        # map @param lines to ExprLists
+        for line in lines:
+            for idx, expr in enumerate(line):
+                if expr == Multiline.RHS_BEGIN:
+                    line[idx] = String('&')
+                elif expr == Multiline.EXPLAIN_BEGIN:
+                    line[idx] = String('&&')
+        self.lines = map(lambda l: ExprList(l), lines)
+
+    def __str__(self):
+        res = []
+        for line in self.lines:
+            res.append('\t{}\\\\'.format(str(line)))
+        return '{}\n{}\n{}'.format('\\begin{align}',
+                                   '\n'.join(res),
+                                   '\\end{align}')
+
+
+class Cases(ASTNode):
+
+    def __init__(self, lines):
+        for line in lines:
+            for idx, expr in enumerate(line):
+                if expr == Multiline.EXPLAIN_BEGIN:
+                    line[idx] = String('&&')
+        self.lines = map(lambda l: ExprList(l), lines)
+
+    def __str__(self):
+        res = []
+        for line in self.lines:
+            res.append('\t{}\\\\'.format(str(line)))
+        return '{}\n{}\n{}'.format('\\begin{cases}',
+                                   '\n'.join(res),
+                                   '\\end{cases}')
 
 
 class ExprList(ASTNode):

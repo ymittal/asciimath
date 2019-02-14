@@ -50,6 +50,58 @@ class Parser:
             expr = self.parseSimpleExpr()
             return node.Root(power, expr)
 
+    def parseLines(self, separator):
+        lines, currLine = [], []
+        # TODO: complete lists of ops
+        while not self.accept(TokenClass.END):
+            if self.accept(separator.tokenClass):
+                lines.append(currLine)
+                self.consumeToken()
+                currLine = list()
+            elif self.accept(TokenClass.EQUALS):
+                consClass = self.token.tokenClass
+                self.consumeToken()
+                currLine.extend([
+                    node.Multiline.RHS_BEGIN,
+                    node.ConstantSymbol(consClass)
+                ])
+            elif self.accept(TokenClass.IF):
+                textClass = self.token.tokenClass
+                self.consumeToken()
+                currLine.extend([
+                    node.Multiline.EXPLAIN_BEGIN,
+                    node.Text(textClass)
+                ])
+            else:
+                expr = self.parseExpr()
+                currLine.append(expr)
+        self.consumeToken()
+        return lines
+
+    def parseMultiline(self):
+        if self.accept(TokenClass.MULTILINE):
+            self.consumeToken()
+            if self.accept(TokenClass.LPAR):
+                self.consumeToken()
+                sep = self.token
+                self.consumeToken()
+                if self.accept(TokenClass.RPAR):
+                    self.consumeToken()
+                    lines = self.parseLines(sep)
+                    return node.Multiline(lines)
+
+    def parseCases(self):
+        if self.accept(TokenClass.CASES):
+            self.consumeToken()
+            if self.accept(TokenClass.LPAR):
+                self.consumeToken()
+                sep = self.token
+                self.consumeToken()
+                if self.accept(TokenClass.RPAR):
+                    self.consumeToken()
+                    lines = self.parseLines(sep)
+                    return node.Cases(lines)
+
     def parseSimpleExpr(self):
         if self.accept(TokenClass.SQRT):
             self.consumeToken()
@@ -92,6 +144,12 @@ class Parser:
                 rBracket = node.RightBracket(self.token.tokenClass)
                 self.consumeToken()
                 return node.BracketedExpr(exprs, lBracket, rBracket)
+
+        elif self.accept(TokenClass.MULTILINE):
+            return self.parseMultiline()
+
+        elif self.accept(TokenClass.CASES):
+            return self.parseCases()
 
         elif self.accept(TokenClass.INVALID):
             value = self.token.data
@@ -145,5 +203,5 @@ def convertToLaTeX(string):
 
 
 if __name__ == '__main__':
-    string = 'e^xy + yx^e'
+    string = 'cases(;) x if x > 0; -x if x <= 0;end'
     print(convertToLaTeX(string))
