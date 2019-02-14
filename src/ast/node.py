@@ -232,18 +232,21 @@ class RightBracket(Bracket):
         return large if resize else small
 
 
-class Multiline(ASTNode):
+class MultipleLineCmd(ASTNode):
 
     RHS_BEGIN = 'RHS_BEGIN'
     EXPLAIN_BEGIN = 'EXPLAIN_BEGIN'
+
+
+class Multiline(MultipleLineCmd):
 
     def __init__(self, lines):
         # map @param lines to ExprLists
         for line in lines:
             for idx, expr in enumerate(line):
-                if expr == Multiline.RHS_BEGIN:
+                if expr == MultipleLineCmd.RHS_BEGIN:
                     line[idx] = String('&')
-                elif expr == Multiline.EXPLAIN_BEGIN:
+                elif expr == MultipleLineCmd.EXPLAIN_BEGIN:
                     line[idx] = String('&&')
         self.lines = map(lambda l: ExprList(l), lines)
 
@@ -256,14 +259,14 @@ class Multiline(ASTNode):
                                    '\\end{align}')
 
 
-class Cases(ASTNode):
+class Cases(MultipleLineCmd):
 
     def __init__(self, lines):
         self.lines = []
         for _l in lines:
-            line = filter(lambda e: e != Multiline.RHS_BEGIN, _l)
+            line = filter(lambda e: e != MultipleLineCmd.RHS_BEGIN, _l)
             for idx, expr in enumerate(line):
-                if expr == Multiline.EXPLAIN_BEGIN:
+                if expr == MultipleLineCmd.EXPLAIN_BEGIN:
                     line[idx] = String('&&')
             self.lines.append(ExprList(line))
 

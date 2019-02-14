@@ -64,7 +64,7 @@ class Parser:
                 self.consumeToken()
                 rhsSeen = True
                 currLine.extend([
-                    node.Multiline.RHS_BEGIN,
+                    node.MultipleLineCmd.RHS_BEGIN,
                     node.ConstantSymbol(consClass)
                 ])
             elif (not explainSeen
@@ -73,7 +73,7 @@ class Parser:
                 self.consumeToken()
                 explainSeen = True
                 currLine.extend([
-                    node.Multiline.EXPLAIN_BEGIN,
+                    node.MultipleLineCmd.EXPLAIN_BEGIN,
                     node.Text(textClass)
                 ])
             else:
