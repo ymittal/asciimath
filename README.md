@@ -42,4 +42,4 @@ $ python replace.py --xml samples/asciimath.xml
 
 ## Contact
 
-Please feel free to contact [Yash Mittal](mailto:yashmittal2009@gmail.com) or [create an issue](https://github.com/ymittal/codeshare/issues/new) if you have questions regarding this project.
+Please feel free to contact [Yash Mittal](mailto:yashmittal2009@gmail.com) or [create an issue](https://github.com/ymittal/asciimath/issues/new) if you have questions regarding this project.
