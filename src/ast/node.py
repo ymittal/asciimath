@@ -9,12 +9,13 @@ from src.tokenizer import TokenClass
 # b ::= frac | root
 # l ::= ( | [ | {
 # r ::= ) | ] | }
-# S ::= c | l Code r | uS | bSS | multi | cases
-# I ::= S | S_S | S^S | S_S^S
-# E ::= I | I/I
-# multi ::= multiline \(sep\) [[E] rel [E] explan [E] sep]* end
-# cases ::= cases \(sep\) [[E] explan [E] sep]* end
-# Code ::= [ E ]
+# S ::= c | l Code r | uS | bSS
+# I ::= S | S_S | S^S | S_S^S | matrix
+# E ::= I | I/I | multi | cases
+# matrix ::= [[ [E,]* [E],]* [ [E,]* [E] ]]
+# multi ::= multiline ;; [[E] rel [E] explan [E] ;;]* end
+# cases ::= cases ;; [[E] explan [E] ;;]* end
+# Code ::= [E]
 
 
 class ASTNode(object):
@@ -153,9 +154,9 @@ class BracketedExpr(Expr):
 
     def __str__(self):
         resize = self.resizeBrackets()
-        return ' %s%s%s ' % (self.lBracket.__str__(resize=resize),
-                             str(self.exprs),
-                             self.rBracket.__str__(resize=resize))
+        return '%s%s%s' % (self.lBracket.__str__(resize=resize),
+                           str(self.exprs),
+                           self.rBracket.__str__(resize=resize))
 
 
 class SuperscriptExpr(Expr):
@@ -239,9 +240,6 @@ class MultipleLineCmd(ASTNode):
     RHS_BEGIN = 'RHS_BEGIN'
     EXPLAIN_BEGIN = 'EXPLAIN_BEGIN'
 
-
-class Multiline(MultipleLineCmd):
-
     def __init__(self, lines):
         for line in lines:
             for idx, expr in enumerate(line):
@@ -252,34 +250,43 @@ class Multiline(MultipleLineCmd):
         # map @param lines to ExprLists
         self.lines = map(lambda l: ExprList(l), lines)
 
+
+class Multiline(MultipleLineCmd):
+
     def __str__(self):
         res = []
         for line in self.lines:
-            res.append('\t{}\\\\'.format(str(line)))
+            res.append('\t' + str(line))
         return '{}\n{}\n{}'.format('\\begin{align}',
-                                   '\n'.join(res),
+                                   '\\\\\n'.join(res),
                                    '\\end{align}')
 
 
 class Cases(MultipleLineCmd):
 
-    def __init__(self, lines):
-        self.lines = []
-        for _l in lines:
-            # remove RHS_BEGIN(s) from each line
-            line = filter(lambda e: e != MultipleLineCmd.RHS_BEGIN, _l)
-            for idx, expr in enumerate(line):
-                if expr == MultipleLineCmd.EXPLAIN_BEGIN:
-                    line[idx] = String('&&')
-            self.lines.append(ExprList(line))
-
     def __str__(self):
         res = []
         for line in self.lines:
-            res.append('\t{}\\\\'.format(str(line)))
+            res.append('\t' + str(line))
         return '{}\n{}\n{}'.format('\\begin{cases}',
-                                   '\n'.join(res),
+                                   '\\\\\n'.join(res),
                                    '\\end{cases}')
+
+
+class Matrix(ASTNode):
+
+    def __init__(self, data):
+        self.data = data
+
+    def __str__(self):
+        res = []
+        for row in self.data:
+            rowStr = ' & '.join([str(c) for c in row])
+            rowStr = '\t{}\\\\'.format(rowStr)
+            res.append(rowStr)
+        return '{}\n{}\n{}'.format('\\begin{bmatrix}',
+                                   '\n'.join(res),
+                                   '\\end{bmatrix}')
 
 
 class ExprList(ASTNode):

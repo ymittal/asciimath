@@ -124,6 +124,7 @@ class TokenClass(Enum):
     UNDERSCORE = 617
     CARAT = 618
     MINUSPLUS = 619
+    COMMA = 620
 
     # arrows and accents
     RARR = 700          # rarr (->)
@@ -167,10 +168,12 @@ class TokenClass(Enum):
     F = 826
     G = 827
 
-    # multiple line
+    # multiline commands and matrices
     MULTILINE = 900
     END = 901
     CASES = 902
+    SYSTEM = 903
+    LINE_SEP = 904
 
     IF = 950
     BECAUSE = 951
@@ -331,10 +334,11 @@ class Tokenizer:
         'f': TokenClass.F,
         'g': TokenClass.G,
 
-        # multiline and cases
+        # multiline commands and matrices
         'multiline': TokenClass.MULTILINE,
         'end': TokenClass.END,
         'cases': TokenClass.CASES,
+        'system': TokenClass.SYSTEM,
 
         'if': TokenClass.IF,
         'because': TokenClass.BECAUSE,
@@ -409,6 +413,9 @@ class Tokenizer:
 
         elif char == '}':
             return Token(TokenClass.RBRA)
+
+        elif char == ',':
+            return Token(TokenClass.COMMA)
 
         elif char == ':':
             if self.sc.peek() == '.':
@@ -527,5 +534,10 @@ class Tokenizer:
             if self.sc.peek(length=2) == '->':
                 self.sc.next(length=2)
                 return Token(TokenClass.MAPSTO)
+
+        elif char == ';':
+            if self.sc.peek() == ';':
+                self.sc.next()
+                return Token(TokenClass.LINE_SEP)
 
         return Token(TokenClass.INVALID, data=char)

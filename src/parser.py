@@ -5,6 +5,7 @@ from collections import deque
 from ast import node
 from scanner import Scanner
 from tokenizer import Tokenizer, TokenClass
+from utils import transform_environment
 
 
 class Parser:
@@ -27,6 +28,7 @@ class Parser:
             self.token = self.buffer.popleft()
         else:
             self.token = self.tokenizer.nextToken()
+        # print(self.token.tokenClass)
 
     def lookAhead(self, k):
         assert k >= 1
@@ -59,15 +61,15 @@ class Parser:
         """
         lines = []
         currLine = []
-        rhsSeen, explanSeen = False, False
+        rhsSeen, explSeen = False, False
         while not self.accept(TokenClass.END):
             if self.accept(separator.tokenClass):
                 lines.append(currLine)
                 self.consumeToken()
                 currLine = []
-                rhsSeen, explanSeen = False, False
+                rhsSeen, explSeen = False, False
             elif (self.accept(*TokenClass.getRelationalOps())
-                  and not rhsSeen):
+                  and not rhsSeen and not explSeen):
                 consClass = self.token.tokenClass
                 self.consumeToken()
                 rhsSeen = True
@@ -76,10 +78,10 @@ class Parser:
                     node.ConstantSymbol(consClass)
                 ])
             elif (self.accept(*TokenClass.getExplanations())
-                  and not explanSeen):
+                  and not explSeen):
                 textClass = self.token.tokenClass
                 self.consumeToken()
-                explanSeen = True
+                explSeen = True
                 currLine.extend([
                     node.MultipleLineCmd.EXPLAIN_BEGIN,
                     node.Text(textClass)
@@ -109,7 +111,7 @@ class Parser:
         """Parses Cases command
             cases(sep) [[E]* explan [E]* sep]* end
         """
-        if self.accept(TokenClass.CASES):
+        if self.accept(TokenClass.CASES, TokenClass.SYSTEM):
             self.consumeToken()
             if self.accept(TokenClass.LPAR):
                 self.consumeToken()
@@ -163,18 +165,45 @@ class Parser:
                 self.consumeToken()
                 return node.BracketedExpr(exprs, lBracket, rBracket)
 
-        elif self.accept(TokenClass.MULTILINE):
-            return self.parseMultiline()
-
-        elif self.accept(TokenClass.CASES):
-            return self.parseCases()
-
         elif self.accept(TokenClass.INVALID):
             value = self.token.data
             self.consumeToken()
             return node.Invalid(value)
 
+    def _parseMatrixRow(self):
+        if not self.accept(TokenClass.LSQB):
+            return []
+
+        self.consumeToken()
+        row, cell = [], []
+        while not self.accept(TokenClass.RSQB):
+            if self.accept(TokenClass.COMMA):
+                self.consumeToken()
+                row.append(node.ExprList(cell))
+                cell = []
+            else:
+                expr = self.parseExpr()
+                cell.append(expr)
+        self.consumeToken()
+        row.append(node.ExprList(cell))
+
+        return row
+
     def parseIntermediateExpr(self):
+        if self.accept(TokenClass.LSQB):
+            if self.lookAhead(k=1).tokenClass == TokenClass.LSQB:
+                self.consumeToken()
+                matrix = []
+                while not self.accept(TokenClass.RSQB):
+                    # parse rows, separated by commas
+                    row = self._parseMatrixRow()
+                    if self.accept(TokenClass.COMMA):
+                        self.consumeToken()
+                    matrix.append(row)
+
+                self.consumeToken()
+                return node.Matrix(data=matrix)
+
         simpleExpr1 = self.parseSimpleExpr()
         if self.accept(TokenClass.UNDERSCORE):
             self.consumeToken()
@@ -197,6 +226,12 @@ class Parser:
         return simpleExpr1
 
     def parseExpr(self):
+        if self.accept(TokenClass.MULTILINE):
+            return self.parseMultiline()
+
+        elif self.accept(TokenClass.CASES, TokenClass.SYSTEM):
+            return self.parseCases()
+
         imdExpr1 = self.parseIntermediateExpr()
         if self.accept(TokenClass.DIV):
             self.consumeToken()
@@ -221,5 +256,7 @@ def convertToLaTeX(string):
 
 
 if __name__ == '__main__':
-    string = 'multiline(;) x in Y if x > oo; x !in Y uu Z otherwise;end'
-    print(convertToLaTeX(string))
+    # string = '''cases(;;)x + y >= 2 otherwise;;end'''
+    string = '[[2+3, 2^2], [3, 4^6], []]'
+    preprocessed = transform_environment(string)
+    print(convertToLaTeX(preprocessed))

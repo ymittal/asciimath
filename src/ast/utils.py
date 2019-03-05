@@ -88,6 +88,7 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.UNDERSCORE: '\\_',
         TokenClass.CARAT: '\\hat{}',
         TokenClass.MINUSPLUS: '\\mp',
+        TokenClass.COMMA: ',',
 
         # arrows and accents
         TokenClass.RARR: '\\rightarrow',
