@@ -33,7 +33,7 @@ $ ./pretext.sh -o generated-html/ mathbook/xsl/mathbook-html.xsl samples/asciima
 - All files in `samples` remain unchanged lest the `pretext.sh` script unexpectedly modify the source XML.
 - AsciiMath to LaTeX conversion is done only on files with `.xml`, `.ptx` extensions in `samples`. Other files are copied to `samples-latex` as is.
 
-### Sample XML file with AsciiMath
+#### Sample XML file with AsciiMath
 
 To check the AsciiMath to LaTeX conversion on a single XML file, run
 ```shell
