@@ -27,10 +27,10 @@ def static_file(path):
 def convert():
     if request.method == 'GET':
         asciimath = request.args.get('asciimath')
-        if asciimath:
+        if asciimath is not None:
             return jsonify(
-                response=convertToLaTeX(asciimath),
-                error=None,
+                latex=convertToLaTeX(asciimath),
+                error=False,
             ), 200
 
         return jsonify(

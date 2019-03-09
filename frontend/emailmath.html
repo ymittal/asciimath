@@ -3,34 +3,49 @@
 
 <head>
     <meta charset=UTF-8>
-    <title>EmailMath</title>
+    <title>AsciiMath</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
-        window.MathJax = {
-    "fast-preview": {
-      disabled: true
-    },
-    AuthorInit: function() {
-      var sections = ['demo', 'arth', 'alg', 'calc'];
-      sections.forEach(function(section) {
-        const sourceId = 'source-' + section;
-        const renderId = 'render-' + section;
-        MathJax.Hub.Register.StartupHook('End', function() {
-        MathJax.Hub.processSectionDelay = 0
-        var source = document.getElementById(sourceId)
-        var render = document.getElementById(renderId)
-        var math = MathJax.Hub.getAllJax(renderId)[0]
-        source.addEventListener('input', function() {
-          MathJax.Hub.Queue(['Text', math, source.value])
-        })
-      })
-      });
+    $.ajax({
+        url: '/api/convert',
+        type: 'get',
+        data: {
+            'asciimath': '[[2 + 3], [3 + 4]]'
+        },
+        success: function(response) {
+            console.log(response.latex);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+    window.MathJax = {
+        "fast-preview": {
+            disabled: true
+        },
+        AuthorInit: function() {
+            var sections = ['demo', 'arth', 'alg', 'calc', 'logic'];
+            sections.forEach(function(section) {
+                const sourceId = 'source-' + section;
+                const renderId = 'render-' + section;
+                MathJax.Hub.Register.StartupHook('End', function() {
+                    MathJax.Hub.processSectionDelay = 0
+                    var source = document.getElementById(sourceId)
+                    var render = document.getElementById(renderId)
+                    var math = MathJax.Hub.getAllJax(renderId)[0]
+                    source.addEventListener('input', function() {
+                        MathJax.Hub.Queue(['Text', math, source.value]);
+                    })
+                })
+            });
+        }
     }
-  }
-  </script>
+    </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML-full">
     </script>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
     <link rel=icon href=img/favicon.ico sizes="16x16 32x32 48x48 64x64 128x128" type=image/x-icon> <link href=http://fonts.googleapis.com/css?family=Quicksand rel=stylesheet type=text/css> <link rel=stylesheet href=css/screen.css> <meta name=viewport content="width=device-width, initial-scale=0.8,
-      minimum-scale=0.8, maximum-scale=10">
+    minimum-scale=0.8, maximum-scale=10">
 </head>
 
 <body>
@@ -39,7 +54,7 @@
     </a>
     <div id="wrapper">
         <nav>
-            <h1>EmailMath</h1>
+            <h1>AsciiMath</h1>
             <div id="links">
                 <a href="#about">about</a>
                 <a href="#gettingStarted">getting started</a>
@@ -53,7 +68,7 @@
                     Try it out in the interactive renderer.</p>
                 <div class="leftColumn">
                     <label for="source-demo">Input:</label>
-          <br />
+                    <br />
                     <textarea class="ioArea" id="source-demo">sum_(i=1)^n i^3=((n(n+1))/2)^2</textarea>
                 </div>
                 <div class="rightColumn">
@@ -373,6 +388,17 @@
                     </tbody>
                 </table>
                 <h4>Logic and Sets</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-logic">x !in A uu ZZ subset B nn QQ</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-logic">
+                            `x !in A uu ZZ subset B nn QQ`
+                        </div>
+                    </div>
+                </div>
                 <table>
                     <thead>
                         <tr>
