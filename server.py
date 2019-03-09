@@ -2,16 +2,25 @@
 
 import os
 
-from flask import Flask, request, jsonify
+from flask import (Flask,
+                   request,
+                   jsonify,
+                   render_template,
+                   send_from_directory)
 
 from src.parser import convertToLaTeX
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="frontend")
 
 
 @app.route('/')
-def hello():
-    return 'Hello, world!'
+def home():
+    return render_template('emailmath.html')
+
+
+@app.route('/<path:path>')
+def static_file(path):
+    return send_from_directory(app.template_folder, path)
 
 
 @app.route('/api/convert', methods=['GET'])
@@ -37,4 +46,4 @@ def convert():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
