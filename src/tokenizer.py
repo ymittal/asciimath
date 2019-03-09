@@ -438,6 +438,8 @@ class Tokenizer:
             elif self.sc.peek(length=2) == '-=':
                 self.sc.next(length=2)
                 return Token(TokenClass.NOTEQUIV)
+            elif self.sc.peek() == ' ':
+                return Token(TokenClass.INVALID, data=char)
             else:
                 # TODO: fails when ! is followed by a token unaccounted for
                 nextToken = self.nextToken()
