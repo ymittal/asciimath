@@ -3,29 +3,34 @@
 
 <head>
     <meta charset=UTF-8>
-    <title>AsciiMath</title>
+    <title>EmailMath</title>
     <script>
         window.MathJax = {
-				"fast-preview": {
-       					disabled: true
-				},
-				AuthorInit: function() {
-					MathJax.Hub.Register.StartupHook('End', function() {
-						MathJax.Hub.processSectionDelay = 0
-						var demoSource = document.getElementById('demoSource')
-						var demoRendering = document.getElementById('demoRendering')
-						var math = MathJax.Hub.getAllJax('demoRendering')[0]
-						demoSource.addEventListener('input', function() {
-							MathJax.Hub.Queue(['Text', math, demoSource.value])
-						})
-					})
-				}
-			}
-	</script>
+    "fast-preview": {
+      disabled: true
+    },
+    AuthorInit: function() {
+      var sections = ['demo', 'arth', 'alg', 'calc'];
+      sections.forEach(function(section) {
+        const sourceId = 'source-' + section;
+        const renderId = 'render-' + section;
+        MathJax.Hub.Register.StartupHook('End', function() {
+        MathJax.Hub.processSectionDelay = 0
+        var source = document.getElementById(sourceId)
+        var render = document.getElementById(renderId)
+        var math = MathJax.Hub.getAllJax(renderId)[0]
+        source.addEventListener('input', function() {
+          MathJax.Hub.Queue(['Text', math, source.value])
+        })
+      })
+      });
+    }
+  }
+  </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML-full">
     </script>
     <link rel=icon href=img/favicon.ico sizes="16x16 32x32 48x48 64x64 128x128" type=image/x-icon> <link href=http://fonts.googleapis.com/css?family=Quicksand rel=stylesheet type=text/css> <link rel=stylesheet href=css/screen.css> <meta name=viewport content="width=device-width, initial-scale=0.8,
-			minimum-scale=0.8, maximum-scale=10">
+      minimum-scale=0.8, maximum-scale=10">
 </head>
 
 <body>
@@ -34,7 +39,7 @@
     </a>
     <div id="wrapper">
         <nav>
-            <h1>AsciiMath</h1>
+            <h1>EmailMath</h1>
             <div id="links">
                 <a href="#about">about</a>
                 <a href="#gettingStarted">getting started</a>
@@ -45,16 +50,16 @@
             <section id="about">
                 <h2>About</h2>
                 <p>AsciiMath is an easy-to-write markup language for mathematics.<br>
-                    Try it out in the interactive renderer:</p>
+                    Try it out in the interactive renderer.</p>
                 <div class="leftColumn">
-                    <label for="demoSource">Input:</label>
-                    <br />
-                    <textarea class="ioArea" id="demoSource">sum_(i=1)^n i^3=((n(n+1))/2)^2</textarea>
+                    <label for="source-demo">Input:</label>
+          <br />
+                    <textarea class="ioArea" id="source-demo">sum_(i=1)^n i^3=((n(n+1))/2)^2</textarea>
                 </div>
                 <div class="rightColumn">
-                    <label for="demoRendering">Rendering:</label>
+                    <label for="render-demo">Rendering:</label>
                     <br />
-                    <div class="ioArea" id="demoRendering">
+                    <div class="ioArea" id="render-demo">
                         `sum_(i=1)^n i^3=((n(n+1))/2)^2`
                     </div>
                 </div>
@@ -62,6 +67,17 @@
             <section id="syntaxBeginners">
                 <h2>Syntax for Beginners</h2>
                 <h4>Arithematic</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-arth">5 xx 2^10 + 150/25 + abs(-23) - 44/11 + 12 * 8 -: sqrt(36) >= root(3)(131 - 6) > floor(37//13)</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-arth">
+                            `5 xx 2^10 + 150/25 + abs(-23) - 44/11 + 12 * 8 -: sqrt(36) >= root(3)(131 - 6) > floor(37//13)`
+                        </div>
+                    </div>
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -195,6 +211,17 @@
                     </tbody>
                 </table>
                 <h4>Algebra</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-alg">cos(pi//2) - e^(x + 9) + (2 x - 3)^2 ~~ (-b +- sqrt(b^2 - 4 a c))/(2a)</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-alg">
+                            `cos(pi//2) - e^(x + 9) + (2 x - 3)^2 ~~ (-b +- sqrt(b^2 - 4 a c))/(2a)`
+                        </div>
+                    </div>
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -248,6 +275,17 @@
                     </tbody>
                 </table>
                 <h4>Calculus</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-calc">int_4^x t^3 -2t+1 dt + d/(dx) tan(cos(x^32)) + f''(u^(-1)) + grad ddot x != sum_(n=1)^oo (del^n f)/(del x^n)(t_0)</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-calc">
+                            `int_4^x t^3 -2t+1 dt + d/(dx) tan(cos(x^32)) + f''(u^(-1)) + grad ddot x != sum_(n=1)^oo (del^n f)/(del x^n)(t_0)`
+                        </div>
+                    </div>
+                </div>
                 <table>
                     <thead>
                         <tr>
