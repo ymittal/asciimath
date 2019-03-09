@@ -1,0 +1,7 @@
+{
+  "name": "AsciiMath to LaTeX",
+  "description": "A simple Flask API to convert AsciiMath to LaTeX",
+  "repository": "https://github.com/ymittal/asciimath",
+  "logo": "http://asciimath.org/img/favicon.ico",
+  "keywords": ["python", "flask", "asciimath", "flask"]
+}
