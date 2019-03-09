@@ -16,7 +16,7 @@ $ pip install -r requirements.txt               # setup pip dependencies
 $ chmod +x pretext.sh
 ```
 
-Run this command to convert AsciiMath markup, written as ``<m>`asciimath goes here</m>`` in `<XML>`, to LaTeX and execute `xsltproc` with any arguments specified after `./pretext.sh`.
+Run this command to convert AsciiMath markup, written as ``<m>`asciimath goes here</m>`` in `<XML>`, to LaTeX. It also runs `xsltproc` with any arguments specified after `./pretext.sh`.
 ```shell
 $ ./pretext.sh -o <output_dir> <STYLESHEET> <XML>
 ```
@@ -24,18 +24,18 @@ Check [this](http://xmlsoft.org/XSLT/xsltproc.html) for `xsltproc` documentation
 
 ### Example
 
-The following command converts AsciiMath markup in files in `samples` folder, stores new XML files to `samples-latex` folder and generates HTML files into `generated-html` folder using `xsltproc`.
+This command converts AsciiMath markup in files in `samples` folder, stores new XML files to `samples-latex` folder and generates HTML files into `generated-html` folder using `xsltproc`.
 ```shell
 $ ./pretext.sh -o generated-html/ mathbook/xsl/mathbook-html.xsl samples/asciimath.xml
 ```
 
-**Notes**:
-- Files in `samples` remain unchanged lest the `pretext.sh` script unexpectedly modify the source XML.
-- AsciiMath to LaTeX conversion is done only on files with `.xml`, `.ptx` extensions in `samples`. Rest of the files are copied to `samples-latex` as is.
+#### Notes
+- All files in `samples` remain unchanged lest the `pretext.sh` script unexpectedly modify the source XML.
+- AsciiMath to LaTeX conversion is done only on files with `.xml`, `.ptx` extensions in `samples`. Other files are copied to `samples-latex` as is.
 
 ### Sample AsciiMath XML
 
-Additionally, you can use `replace.py` script to check the AsciiMath to LaTeX conversion on a single XML file.
+To check the AsciiMath to LaTeX conversion on a single XML file, run
 ```shell
 $ python replace.py --xml samples/asciimath.xml
 ```
