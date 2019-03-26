@@ -6,35 +6,36 @@
     <title>AsciiMath</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
-    $.ajax({
-        url: '/api/convert',
-        type: 'get',
-        data: {
-            'asciimath': '[[2 + 3], [3 + 4]]'
-        },
-        success: function(response) {
-            console.log(response.latex);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-        }
-    });
-    window.MathJax = {
+        window.MathJax = {
         "fast-preview": {
             disabled: true
         },
         AuthorInit: function() {
-            var sections = ['demo', 'arth', 'alg', 'calc', 'logic'];
+            var sections = ['demo', 'arth', 'alg', 'calc', 'logic', 'multi'];
             sections.forEach(function(section) {
                 const sourceId = 'source-' + section;
                 const renderId = 'render-' + section;
+
                 MathJax.Hub.Register.StartupHook('End', function() {
                     MathJax.Hub.processSectionDelay = 0
                     var source = document.getElementById(sourceId)
-                    var render = document.getElementById(renderId)
                     var math = MathJax.Hub.getAllJax(renderId)[0]
+
                     source.addEventListener('input', function() {
-                        MathJax.Hub.Queue(['Text', math, source.value]);
+                        $.ajax({
+                            url: '/api/convert',
+                            type: 'get',
+                            data: {
+                                'asciimath': source.value
+                            },
+                            success: function(response) {
+                                MathJax.Hub.Queue(['Text', math, response.latex]);
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log(errorThrown);
+                            }
+                        }); 
+                        // MathJax.Hub.Queue(['Text', math, source.value]);
                     })
                 })
             });
@@ -43,7 +44,7 @@
     </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML-full">
     </script>
-    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
     <link rel=icon href=img/favicon.ico sizes="16x16 32x32 48x48 64x64 128x128" type=image/x-icon> <link href=http://fonts.googleapis.com/css?family=Quicksand rel=stylesheet type=text/css> <link rel=stylesheet href=css/screen.css> <meta name=viewport content="width=device-width, initial-scale=0.8,
     minimum-scale=0.8, maximum-scale=10">
 </head>
@@ -57,8 +58,7 @@
             <h1>AsciiMath</h1>
             <div id="links">
                 <a href="#about">about</a>
-                <a href="#gettingStarted">getting started</a>
-                <a href="#syntax">syntax</a>
+                <a href="#syntaxBeginners">syntax</a>
             </div>
         </nav>
         <article>
@@ -75,7 +75,7 @@
                     <label for="render-demo">Rendering:</label>
                     <br />
                     <div class="ioArea" id="render-demo">
-                        `sum_(i=1)^n i^3=((n(n+1))/2)^2`
+                        $$\sum_{i = 1}^{n} i^{3} = \left(\frac{n (n + 1)}{2}\right)^{2}$$
                     </div>
                 </div>
             </section>
@@ -512,6 +512,62 @@
                         <tr>
                             <td>supe</td>
                             <td>`supe`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Matrices and Cases</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-multi">[[2 + 3, 3], [3^4, 10]]</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-multi">
+                            $$\begin{bmatrix}
+                            2 + 3 & 3\\
+                            3^{4} & 10\\
+                            \end{bmatrix}$$
+                        </div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>[[2, ], [, 3]]</td>
+                            <td>$$\begin{bmatrix}
+                                2 & \\
+                                  & 3\\
+                                \end{bmatrix}$$</td>
+                        </tr>
+                        <tr>
+                            <td>cases:<br>&nbsp;&nbsp;x if x > 0<br>&nbsp;&nbsp;y otherwise</td>
+                            <td>$$\begin{cases}
+                                x && \text{if } x \gt 0\\
+                                y && \text{otherwise }
+                                \end{cases}$$</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>multiline:<br>&nbsp;&nbsp;a = b<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;>= sqrt(c) + 10</td>
+                            <td>$$\begin{align}
+                                a & = b\\
+                                & \ge \sqrt{c} + 10\\
+                                \end{align}$$</td>
                         </tr>
                     </tbody>
                 </table>

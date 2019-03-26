@@ -259,6 +259,7 @@ class Parser:
 
 
 def convertToLaTeX(string):
+    string = transform_environment(string)
     tokenizer = Tokenizer(scanner=Scanner(string))
     parser = Parser(tokenizer=tokenizer)
     return str(parser.parseCode())
