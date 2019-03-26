@@ -63,6 +63,9 @@ class Parser:
         currLine = []
         rhsSeen, explSeen = False, False
         while not self.accept(TokenClass.END):
+            if self.accept(TokenClass.EOF):
+                break
+
             if self.accept(separator.tokenClass):
                 lines.append(currLine)
                 self.consumeToken()
@@ -177,6 +180,9 @@ class Parser:
         self.consumeToken()
         row, cell = [], []
         while not self.accept(TokenClass.RSQB):
+            if self.accept(TokenClass.EOF):
+                break
+
             if self.accept(TokenClass.COMMA):
                 self.consumeToken()
                 row.append(node.ExprList(cell))
@@ -195,6 +201,9 @@ class Parser:
                 self.consumeToken()
                 matrix = []
                 while not self.accept(TokenClass.RSQB):
+                    if self.accept(TokenClass.EOF):
+                        break
+
                     # parse rows, separated by commas
                     row = self._parseMatrixRow()
                     if self.accept(TokenClass.COMMA):
