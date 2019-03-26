@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang=en-US>
+
+<head>
+    <meta charset=UTF-8>
+    <title>AsciiMath</title>
+    <style type="text/css">
+        #syntaxBeginners table {
+            display: none !important;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        window.MathJax = {
+        "fast-preview": {
+            disabled: true
+        },
+        AuthorInit: function() {
+            var sections = ['demo', 'arth', 'alg', 'calc', 'logic', 'multi'];
+            sections.forEach(function(section) {
+                const sourceId = 'source-' + section;
+                const renderId = 'render-' + section;
+
+                MathJax.Hub.Register.StartupHook('End', function() {
+                    MathJax.Hub.processSectionDelay = 0
+                    var source = document.getElementById(sourceId)
+                    var math = MathJax.Hub.getAllJax(renderId)[0]
+
+                    source.addEventListener('input', function() {
+                        $.ajax({
+                            url: '/api/convert',
+                            type: 'get',
+                            data: {
+                                'asciimath': source.value
+                            },
+                            success: function(response) {
+                                MathJax.Hub.Queue(['Text', math, response.latex]);
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log(errorThrown);
+                            }
+                        }); 
+                        // MathJax.Hub.Queue(['Text', math, source.value]);
+                    })
+                })
+            });
+        }
+    }
+    </script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML-full">
+    </script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel=icon href=img/favicon.ico sizes="16x16 32x32 48x48 64x64 128x128" type=image/x-icon> <link href=http://fonts.googleapis.com/css?family=Quicksand rel=stylesheet type=text/css> <link rel=stylesheet href=css/screen.css> <meta name=viewport content="width=device-width, initial-scale=0.8,
+    minimum-scale=0.8, maximum-scale=10">
+</head>
+
+<body>
+    <a id="forkMe" href="https://github.com/mathjax/asciimathml">
+        Fork me on GitHub
+    </a>
+    <div id="wrapper">
+        <nav>
+            <h1>AsciiMath</h1>
+            <div id="links">
+                <a href="#about">about</a>
+                <a href="#syntaxBeginners">syntax</a>
+            </div>
+        </nav>
+        <article>
+            <section id="about">
+                <h2>About</h2>
+                <p>AsciiMath is an easy-to-write markup language for mathematics.<br>
+                    Try it out in the interactive renderer.</p>
+                <div class="leftColumn">
+                    <label for="source-demo">Input:</label>
+                    <br />
+                    <textarea class="ioArea" id="source-demo">sum_(i=1)^n i^3=((n(n+1))/2)^2</textarea>
+                </div>
+                <div class="rightColumn">
+                    <label for="render-demo">Rendering:</label>
+                    <br />
+                    <div class="ioArea" id="render-demo">
+                        $$\sum_{i = 1}^{n} i^{3} = \left(\frac{n (n + 1)}{2}\right)^{2}$$
+                    </div>
+                </div>
+            </section>
+            <section id="syntaxBeginners">
+                <h2>Syntax for Beginners</h2>
+                <h4>Arithematic</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-arth">5 xx 2^10 + 150/25 + abs(-23) - 44/11 + 12 * 8 -: sqrt(36) >= root(3)(131 - 6) > floor(37//13)</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-arth">
+                            `5 xx 2^10 + 150/25 + abs(-23) - 44/11 + 12 * 8 -: sqrt(36) >= root(3)(131 - 6) > floor(37//13)`
+                        </div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>+</td>
+                            <td>`+`</td>
+                        </tr>
+                        <tr>
+                            <td>&minus;</td>
+                            <td>`-`</td>
+                        </tr>
+                        <tr>
+                            <td>*</td>
+                            <td>`*`</td>
+                        </tr>
+                        <tr>
+                            <td>//</td>
+                            <td>`//`</td>
+                        </tr>
+                        <tr>
+                            <td>xx</td>
+                            <td>`xx`</td>
+                        </tr>
+                        <tr>
+                            <td>-:</td>
+                            <td>`-:`</td>
+                        </tr>
+                        <tr>
+                            <td>+&minus;</td>
+                            <td>`+-`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2/3</td>
+                            <td>`2/3`</td>
+                        </tr>
+                        <tr>
+                            <td>2^3</td>
+                            <td>`2^3`</td>
+                        </tr>
+                        <tr>
+                            <td>sqrt x</td>
+                            <td>`sqrt x`</td>
+                        </tr>
+                        <tr>
+                            <td>root 3 x</td>
+                            <td>`root 3 x`</td>
+                        </tr>
+                        <tr>
+                            <td>abs(x)</td>
+                            <td>`abs(x)`</td>
+                        </tr>
+                        <tr>
+                            <td>floor(x)</td>
+                            <td>`floor(x)`</td>
+                        </tr>
+                        <tr>
+                            <td>ceil(x)</td>
+                            <td>`ceil(x)`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>=</td>
+                            <td>`=`</td>
+                        </tr>
+                        <tr>
+                            <td>!=</td>
+                            <td>`!=`</td>
+                        </tr>
+                        <tr>
+                            <td>&lt;</td>
+                            <td>`<`</td> </tr> <tr>
+                            <td>&gt;</td>
+                            <td>`>`</td>
+                        </tr>
+                        <tr>
+                            <td>&le;</td>
+                            <td>`<=`</td> </tr> <tr>
+                            <td>&ge;</td>
+                            <td>`>=`</td>
+                        </tr>
+                        <tr>
+                            <td>&minus;=</td>
+                            <td>`-=`</td>
+                        </tr>
+                        <tr>
+                            <td>~~</td>
+                            <td>`~~`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ubrace(1+2)</td>
+                            <td>`ubrace(1+2)`</td>
+                        </tr>
+                        <tr>
+                            <td>obrace(1+2)</td>
+                            <td>`obrace(1+2)`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Algebra</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-alg">cos(pi//2) - e^(x + 9) + (2 x - 3)^2 ~~ (-b +- sqrt(b^2 - 4 a c))/(2a)</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-alg">
+                            `cos(pi//2) - e^(x + 9) + (2 x - 3)^2 ~~ (-b +- sqrt(b^2 - 4 a c))/(2a)`
+                        </div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>cancel(x)</td>
+                            <td>`cancel(x)`</td>
+                        </tr>
+                        <tr>
+                            <td>@</td>
+                            <td>`@`</td>
+                        </tr>
+                        <tr>
+                            <td>|...|</td>
+                            <td>`|...|`</td>
+                        </tr>
+                        <tr>
+                            <td>|cdots|</td>
+                            <td>`|cdots|`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>cos(x)</td>
+                            <td>`cos(x)`</td>
+                        </tr>
+                        <tr>
+                            <td>sin(x)</td>
+                            <td>`sin(x)`</td>
+                        </tr>
+                        <tr>
+                            <td>log(x)</td>
+                            <td>`log(x)`</td>
+                        </tr>
+                        <tr>
+                            <td>ln(x)</td>
+                            <td>`ln(x)`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Calculus</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-calc">int_4^x t^3 -2t+1 dt + d/(dx) tan(cos(x^32)) + f''(u^(-1)) + grad ddot x != sum_(n=1)^oo (del^n f)/(del x^n)(t_0)</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-calc">
+                            `int_4^x t^3 -2t+1 dt + d/(dx) tan(cos(x^32)) + f''(u^(-1)) + grad ddot x != sum_(n=1)^oo (del^n f)/(del x^n)(t_0)`
+                        </div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>oo</td>
+                            <td>`oo`</td>
+                        </tr>
+                        <tr>
+                            <td>&minus;></td>
+                            <td>`->`</td>
+                        </tr>
+                        <tr>
+                            <td>rarr</td>
+                            <td>`rarr`</td>
+                        </tr>
+                        <tr>
+                            <td>larr</td>
+                            <td>`larr`</td>
+                        </tr>
+                        <tr>
+                            <td>|&minus;></td>
+                            <td>`|->`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>int</td>
+                            <td>`int`</td>
+                        </tr>
+                        <tr>
+                            <td>oint</td>
+                            <td>`oint`</td>
+                        </tr>
+                        <tr>
+                            <td>del</td>
+                            <td>`del`</td>
+                        </tr>
+                        <tr>
+                            <td>grad</td>
+                            <td>`grad`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>vec x</td>
+                            <td>`vec x`</td>
+                        </tr>
+                        <tr>
+                            <td>dot x</td>
+                            <td>`dot x`</td>
+                        </tr>
+                        <tr>
+                            <td>ddot x</td>
+                            <td>`ddot x`</td>
+                        </tr>
+                        <tr>
+                            <td>sum</td>
+                            <td>`sum`</td>
+                        </tr>
+                        <tr>
+                            <td>prod</td>
+                            <td>`prod`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Logic and Sets</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-logic">x !in A uu ZZ subset B nn QQ</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-logic">
+                            `x !in A uu ZZ subset B nn QQ`
+                        </div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>and</td>
+                            <td>`and`</td>
+                        </tr>
+                        <tr>
+                            <td>or</td>
+                            <td>`or`</td>
+                        </tr>
+                        <tr>
+                            <td>not</td>
+                            <td>`not`</td>
+                        </tr>
+                        <tr>
+                            <td>=></td>
+                            <td>`=>`</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <=>
+                            </td>
+                            <td>`<=>`</td>
+                        </tr>
+                        <tr>
+                            <td>if</td>
+                            <td>`if`</td>
+                        </tr>
+                        <tr>
+                            <td>:.</td>
+                            <td>`:.`</td>
+                        </tr>
+                        <tr>
+                            <td>:'</td>
+                            <td>`:'`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>nn</td>
+                            <td>`nn`</td>
+                        </tr>
+                        <tr>
+                            <td>nnn</td>
+                            <td>`nnn`</td>
+                        </tr>
+                        <tr>
+                            <td>uu</td>
+                            <td>`uu`</td>
+                        </tr>
+                        <tr>
+                            <td>uuu</td>
+                            <td>`uuu`</td>
+                        </tr>
+                        <tr>
+                            <td>\\</td>
+                            <td>`\\`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AA</td>
+                            <td>`AA`</td>
+                        </tr>
+                        <tr>
+                            <td>EE</td>
+                            <td>`EE`</td>
+                        </tr>
+                        <tr>
+                            <td>in</td>
+                            <td>`in`</td>
+                        </tr>
+                        <tr>
+                            <td>!in</td>
+                            <td>`!in`</td>
+                        </tr>
+                        <tr>
+                            <td>sub</td>
+                            <td>`sub`</td>
+                        </tr>
+                        <tr>
+                            <td>sup</td>
+                            <td>`sup`</td>
+                        </tr>
+                        <tr>
+                            <td>sube</td>
+                            <td>`sube`</td>
+                        </tr>
+                        <tr>
+                            <td>supe</td>
+                            <td>`supe`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Matrices and Cases</h4>
+                <div class="example-area">
+                    <div class="">
+                        <textarea class="io-box" id="source-multi">[[2 + 3, 3], [3^4, 10]]</textarea>
+                    </div>
+                    <div class="">
+                        <i>appears as</i>
+                        <div class="io-box render-box" id="render-multi">
+                            $$\begin{bmatrix}
+                            2 + 3 & 3\\
+                            3^{4} & 10\\
+                            \end{bmatrix}$$
+                        </div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>[[2, ], [, 3]]</td>
+                            <td>$$\begin{bmatrix}
+                                2 & \\
+                                  & 3\\
+                                \end{bmatrix}$$</td>
+                        </tr>
+                        <tr>
+                            <td>cases:<br>&nbsp;&nbsp;x if x > 0<br>&nbsp;&nbsp;y otherwise</td>
+                            <td>$$\begin{cases}
+                                x && \text{if } x \gt 0\\
+                                y && \text{otherwise }
+                                \end{cases}$$</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>See</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>multiline:<br>&nbsp;&nbsp;a = b<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;>= sqrt(c) + 10</td>
+                            <td>$$\begin{align}
+                                a & = b\\
+                                & \ge \sqrt{c} + 10\\
+                                \end{align}$$</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            </section>
+        </article>
+    </div>
+</body>
+
+</html>
