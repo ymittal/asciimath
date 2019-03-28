@@ -262,11 +262,19 @@ def convertToLaTeX(string):
     string = transform_environment(string)
     tokenizer = Tokenizer(scanner=Scanner(string))
     parser = Parser(tokenizer=tokenizer)
-    return str(parser.parseCode())
+    res = str(parser.parseCode())
+    print(res)
+    return res
 
 
 if __name__ == '__main__':
     # string = '''cases(;;)x + y >= 2 otherwise;;end'''
     string = '[[2+3, 2^2], [3, 4^6], []]'
+    string = '''
+    sgn(x) = cases:
+      1 if x > 0
+        0 if x = 0
+        -1
+    '''
     preprocessed = transform_environment(string)
     print(convertToLaTeX(preprocessed))
