@@ -17,6 +17,15 @@ def _getGreekLettersToLaTeX():
     return res
 
 
+def _getUnaryOpToLaTeX():
+    return {
+        TokenClass.SQRT: '\\sqrt{%s}',
+        TokenClass.VEC: '\\vec{%s}',
+        TokenClass.DOT: '\\dot{%s}',
+        TokenClass.DDOT: '\\ddot{%s}',
+    }
+
+
 def _getConstantSymbolsToLaTeX():
     return {
         # operations
@@ -117,6 +126,7 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.EXP: '\\exp',
         TokenClass.LOG: '\\log',
         TokenClass.LN: '\\ln',
+
         TokenClass.DET: '\\det',
         TokenClass.DIM: '\\dim',
         TokenClass.MOD: '\\mod',

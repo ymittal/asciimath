@@ -136,6 +136,9 @@ class TokenClass(Enum):
     UARR = 706          # uarr (↑)
     DARR = 707          # darr (↓)
     MAPSTO = 708        # |-> (↦)
+    VEC = 709
+    DOT = 710
+    DDOT = 711
 
     # standard functions
     SIN = 800
@@ -307,6 +310,9 @@ class Tokenizer:
         'lArr': TokenClass.LARR_THICK,
         'rArr': TokenClass.RARR_THICK,
         'hArr': TokenClass.LRARR_THICK,
+        'vec': TokenClass.VEC,
+        'dot': TokenClass.DOT,
+        'ddot': TokenClass.DDOT,
 
         # standard functions
         'sin': TokenClass.SIN,

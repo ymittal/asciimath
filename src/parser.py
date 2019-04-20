@@ -28,7 +28,6 @@ class Parser:
             self.token = self.buffer.popleft()
         else:
             self.token = self.tokenizer.nextToken()
-        # print(self.token.tokenClass)
 
     def lookAhead(self, k):
         assert k >= 1
@@ -42,14 +41,14 @@ class Parser:
     def parseBinarySymbols(self):
         if self.accept(TokenClass.FRAC):
             self.consumeToken()
-            numerator = self.parseSimpleExpr()
-            denominator = self.parseSimpleExpr()
+            numerator = self.parseExpr()
+            denominator = self.parseExpr()
             return node.Frac(numerator, denominator)
 
         elif self.accept(TokenClass.ROOT):
             self.consumeToken()
-            power = self.parseSimpleExpr()
-            expr = self.parseSimpleExpr()
+            power = self.parseExpr()
+            expr = self.parseExpr()
             return node.Root(power, expr)
 
     def _parseLines(self, separator):
@@ -97,7 +96,7 @@ class Parser:
 
     def parseMultiline(self):
         """Parse Multiline command
-            multiline(sep) [[E]* relOp [E]* explan [E]* sep]* end
+            multiline(sep) [[E]* relOp [E]* explain [E]* sep]* end
         """
         if self.accept(TokenClass.MULTILINE):
             self.consumeToken()
@@ -112,7 +111,7 @@ class Parser:
 
     def parseCases(self):
         """Parses Cases command
-            cases(sep) [[E]* explan [E]* sep]* end
+            cases(sep) [[E]* explain [E]* sep]* end
         """
         if self.accept(TokenClass.CASES, TokenClass.SYSTEM):
             self.consumeToken()
@@ -126,10 +125,14 @@ class Parser:
                     return node.Cases(lines)
 
     def parseSimpleExpr(self):
-        if self.accept(TokenClass.SQRT):
+        if self.accept(TokenClass.SQRT,
+                       TokenClass.VEC,
+                       TokenClass.DOT,
+                       TokenClass.DDOT):
+            tokenClass = self.token.tokenClass
             self.consumeToken()
-            expr = self.parseSimpleExpr()
-            return node.Sqrt(expr)
+            expr = self.parseExpr()
+            return node.UnaryOp(tokenClass, expr)
 
         elif self.accept(TokenClass.FRAC, TokenClass.ROOT):
             return self.parseBinarySymbols()
@@ -263,18 +266,11 @@ def convertToLaTeX(string):
     tokenizer = Tokenizer(scanner=Scanner(string))
     parser = Parser(tokenizer=tokenizer)
     res = str(parser.parseCode())
-    print(res)
     return res
 
 
 if __name__ == '__main__':
     # string = '''cases(;;)x + y >= 2 otherwise;;end'''
-    string = '[[2+3, 2^2], [3, 4^6], []]'
-    string = '''
-    sgn(x) = cases:
-      1 if x > 0
-        0 if x = 0
-        -1
-    '''
+    string = 'dot x_i/x_i^2'
     preprocessed = transform_environment(string)
     print(convertToLaTeX(preprocessed))

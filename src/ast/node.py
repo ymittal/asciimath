@@ -4,20 +4,6 @@ import utils
 from src.tokenizer import TokenClass
 
 
-# c ::= [a-zA-Z] | numbers | greek letters | standard functions | , | other symbols (see list)
-# u ::= sqrt
-# b ::= frac | root
-# l ::= ( | [ | {
-# r ::= ) | ] | }
-# S ::= c | l Code r | uS | bSS
-# I ::= S | S_S | S^S | S_S^S | matrix
-# E ::= I | I/I | multi | cases
-# matrix ::= [[ [E,]* [E],]* [ [E,]* [E] ]]
-# multi ::= multiline ;; [[E] rel [E] explan [E] ;;]* end
-# cases ::= cases ;; [[E] explan [E] ;;]* end
-# Code ::= [E]
-
-
 class ASTNode(object):
 
     @staticmethod
@@ -45,7 +31,6 @@ class Constant(ASTNode):
 
 
 class ConstantSymbol(Constant):
-
     TO_LATEX = utils._getConstantSymbolsToLaTeX()
 
     def __init__(self, tokenClass):
@@ -55,11 +40,11 @@ class ConstantSymbol(Constant):
         return self.TO_LATEX.get(self.tokenClass, '')
 
     def resizeBrackets(self):
-        return self.tokenClass in utils._getConstantSymbolsWithResizedBrackets()
+        symbols = utils._getConstantSymbolsWithResizedBrackets()
+        return self.tokenClass in symbols
 
 
 class GreekLetter(Constant):
-
     TO_LATEX = utils._getGreekLettersToLaTeX()
 
     def __init__(self, tokenClass):
@@ -97,15 +82,15 @@ class Text(Constant):
 
 
 class UnaryOp(ASTNode):
+    TO_LATEX = utils._getUnaryOpToLaTeX()
 
-    def __init__(self, expr):
+    def __init__(self, tokenClass, expr):
+        self.tokenClass = tokenClass
         self.expr = self.stripBrackets(expr)
 
-
-class Sqrt(UnaryOp):
-
     def __str__(self):
-        return '\\sqrt{%s}' % str(self.expr)
+        fmtStr = self.TO_LATEX.get(self.tokenClass)
+        return fmtStr % str(self.expr)
 
     def resizeBrackets(self):
         return self.expr.resizeBrackets()
@@ -125,7 +110,8 @@ class Root(BinaryOp):
                                    str(self.expr2))
 
     def resizeBrackets(self):
-        return self.expr1.resizeBrackets() or self.expr2.resizeBrackets()
+        return (self.expr1.resizeBrackets()
+                or self.expr2.resizeBrackets())
 
 
 class Frac(BinaryOp):
@@ -210,7 +196,6 @@ class Bracket(ASTNode):
 
 
 class LeftBracket(Bracket):
-
     TO_LATEX = {
         TokenClass.LPAR: ('\\left(', '('),
         TokenClass.LSQB: ('\\left[', '['),
@@ -223,7 +208,6 @@ class LeftBracket(Bracket):
 
 
 class RightBracket(Bracket):
-
     TO_LATEX = {
         TokenClass.RPAR: ('\\right)', ')'),
         TokenClass.RSQB: ('\\right]', ']'),
@@ -236,7 +220,6 @@ class RightBracket(Bracket):
 
 
 class MultipleLineCmd(ASTNode):
-
     RHS_BEGIN = 'RHS_BEGIN'
     EXPLAIN_BEGIN = 'EXPLAIN_BEGIN'
 

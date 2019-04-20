@@ -1,0 +1,18 @@
+c ::= [a-zA-Z]+ | integer | Greek letter | other symbols
+l ::= \( | \[ | \{
+r ::= \) | \] | \}
+
+unary ::= sqrt | vec | dot | ddot
+binary ::= frac | root
+
+matrix ::= \[ (\[ [E,]* [E] \])* (\[ [E,]* [E] \]) \]
+
+explain ::= "if" | "because" | "unless" | "provided" | "otherwise"
+multi ::= "multiline"(sep) [[E] relOp [E] explain [E] sep]* "end"
+cases ::= ("cases"|"system")(sep) [[E] explain [E] sep]* "end"
+
+S ::= c | l Code r | unary E | binary EE
+I ::= matrix | S | S_S | S^S | S_S^S
+E ::= multi | cases | I | I/I
+
+Code ::= [E]
