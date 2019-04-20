@@ -89,7 +89,7 @@ class UnaryOp(ASTNode):
         self.expr = self.stripBrackets(expr)
 
     def __str__(self):
-        fmtStr = self.TO_LATEX.get(self.tokenClass)
+        fmtStr = self.TO_LATEX.get(self.tokenClass, '{%s}')
         return fmtStr % str(self.expr)
 
     def resizeBrackets(self):
