@@ -1,4 +1,6 @@
-c ::= [a-zA-Z]+ | integer | Greek letter | other symbols
+dee ::= "d" ([a-zA-Z]|Greek letter)
+
+c ::= [a-zA-Z] | dee | integer | Greek letter | other symbols
 l ::= \( | \[ | \{
 r ::= \) | \] | \}
 

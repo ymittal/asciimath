@@ -36,6 +36,11 @@ class TestParser(unittest.TestCase):
         self.compare('(sin^-1 x)', '\\left(\\sin^{-1}x\\right)')
         self.compare('(sin x)', '(\\sin\,x)')
 
+    def testDeeVar(self):
+        self.compare('d theta', 'd\\theta')
+        self.compare('dy/dx', '\\frac{dy}{dx}')
+        self.compare('dy/d theta', '\\frac{dy}{d\\theta}')
+
     def testLiterals(self):
         # numbers
         self.compare('-73', '-73')

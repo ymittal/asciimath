@@ -7,6 +7,8 @@ from scanner import Scanner
 from tokenizer import Tokenizer, TokenClass
 from utils import transform_environment
 
+DEE = 'd'
+
 
 class Parser:
 
@@ -150,6 +152,11 @@ class Parser:
         elif self.accept(TokenClass.STRING):
             value = self.token.data
             self.consumeToken()
+            if value == DEE:
+                if self.accept(TokenClass.STRING,
+                               *TokenClass.getGreekLetters()):
+                    var = self.parseSimpleExpr()
+                    return node.DeeVar(var)
             return node.String(value)
 
         elif self.accept(TokenClass.NUMBER):
@@ -281,6 +288,6 @@ def convertToLaTeX(string):
 
 if __name__ == '__main__':
     # string = '''cases(;;)x + y >= 2 otherwise;;end'''
-    string = 'exp^-1 e^sin(x^2)'
+    string = 'dy/d theta'
     preprocessed = transform_environment(string)
     print(convertToLaTeX(preprocessed))

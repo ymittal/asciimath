@@ -72,6 +72,15 @@ class String(Constant):
         return str(self.val)
 
 
+class DeeVar(ASTNode):
+
+    def __init__(self, var):
+        self.var = var
+
+    def __str__(self):
+        return 'd%s' % (str(self.var))
+
+
 class Text(Constant):
 
     def __init__(self, tokenClass):
