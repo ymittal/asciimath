@@ -117,7 +117,7 @@ class TokenClass(Enum):
     SET_R = 610
     SET_Z = 611
     THEREFORE = 612     # :. (∴)
-    BECAUSE = 613       # :' (∵)
+    BECAUSE_SET = 613   # :' (∵)
     PLUSMINUS = 614
     OINT = 615          # oint (∮)
     FRAC = 616
@@ -205,6 +205,7 @@ class TokenClass(Enum):
         res = []
         res.extend(TokenClass._getWithin(200, 500))
         res.extend(TokenClass._getWithin(600, 900))
+        res.extend(TokenClass._getWithin(950, 1000))
         return res
 
     @staticmethod
@@ -434,7 +435,7 @@ class Tokenizer:
                 return Token(TokenClass.THEREFORE)
             elif self.sc.peek() == '\'':
                 self.sc.next()
-                return Token(TokenClass.BECAUSE)
+                return Token(TokenClass.BECAUSE_SET)
 
         if char == '=':
             if self.sc.peek() == '>':

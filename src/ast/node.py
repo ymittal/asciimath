@@ -261,6 +261,10 @@ class Multiline(MultipleLineCmd):
         res = []
         for line in self.lines:
             res.append('\t' + str(line))
+
+        if len(res) == 0:
+            return '\\begin{align}\n\\end{align}'
+
         return '{}\n{}\n{}'.format('\\begin{align}',
                                    '\\\\\n'.join(res),
                                    '\\end{align}')
@@ -272,6 +276,10 @@ class Cases(MultipleLineCmd):
         res = []
         for line in self.lines:
             res.append('\t' + str(line))
+
+        if len(res) == 0:
+            return '\\begin{cases}\n\\end{cases}'
+
         return '{}\n{}\n{}'.format('\\begin{cases}',
                                    '\\\\\n'.join(res),
                                    '\\end{cases}')

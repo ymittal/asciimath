@@ -90,7 +90,7 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.SET_R: '\\mathbb{R}',
         TokenClass.SET_Z: '\\mathbb{Z}',
         TokenClass.THEREFORE: '\\therefore',
-        TokenClass.BECAUSE: '\\because',
+        TokenClass.BECAUSE_SET: '\\because',
         TokenClass.PLUSMINUS: '\\pm',
         TokenClass.OINT: '\\oint',
         TokenClass.FRAC: '/',
@@ -136,6 +136,13 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.LCM: '\\text{lcm}',
         TokenClass.MIN: '\\min',
         TokenClass.MAX: '\\max',
+
+        # multiline commands and matrices
+        TokenClass.IF: '\\text{if }',
+        TokenClass.BECAUSE: '\\text{because }',
+        TokenClass.UNLESS: '\\text{unless }',
+        TokenClass.PROVIDED: '\\text{provided }',
+        TokenClass.OTHERWISE: '\\text{otherwise }',
     }
 
 
