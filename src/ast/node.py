@@ -114,7 +114,7 @@ class InvertibleFunc(ASTNode):
             return '%s\,%s' % (funcStr, str(self.expr))
 
     def resizeBrackets(self):
-        return self.expr.resizeBrackets()
+        return True if self.power else self.expr.resizeBrackets()
 
 
 class BinaryOp(ASTNode):
