@@ -134,6 +134,16 @@ class Parser:
             expr = self.parseExpr()
             return node.UnaryOp(tokenClass, expr)
 
+        elif self.accept(*TokenClass.getInvertibleFunctions()):
+            funcClass = self.token.tokenClass
+            self.consumeToken()
+            power = None
+            if self.accept(TokenClass.CARAT):
+                self.consumeToken()
+                power = self.parseExpr()
+            expr = self.parseExpr()
+            return node.InvertibleFunc(funcClass, expr, power)
+
         elif self.accept(TokenClass.FRAC, TokenClass.ROOT):
             return self.parseBinarySymbols()
 
@@ -271,6 +281,6 @@ def convertToLaTeX(string):
 
 if __name__ == '__main__':
     # string = '''cases(;;)x + y >= 2 otherwise;;end'''
-    string = 'dot x_i/x_i^2'
+    string = 'exp^-1 e^sin(x^2)'
     preprocessed = transform_environment(string)
     print(convertToLaTeX(preprocessed))

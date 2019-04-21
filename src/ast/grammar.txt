@@ -4,14 +4,20 @@ r ::= \) | \] | \}
 
 unary ::= sqrt | vec | dot | ddot
 binary ::= frac | root
+InvertFunc ::= sin | cos | tan | sec | csc | cot |
+               arcsin | arccos | arctan |
+               sinh | cosh | tanh |
+               exp | log | ln | f | g
 
 matrix ::= \[ (\[ [E,]* [E] \])* (\[ [E,]* [E] \]) \]
 
-explain ::= "if" | "because" | "unless" | "provided" | "otherwise"
+explain ::= "if" | "because" | "unless" |
+            "provided" | "otherwise"
+
 multi ::= "multiline"(sep) [[E] relOp [E] explain [E] sep]* "end"
 cases ::= ("cases"|"system")(sep) [[E] explain [E] sep]* "end"
 
-S ::= c | l Code r | unary E | binary EE
+S ::= c | l Code r | unary E | binary EE | InvertFunc (^E)? E
 I ::= matrix | S | S_S | S^S | S_S^S
 E ::= multi | cases | I | I/I
 

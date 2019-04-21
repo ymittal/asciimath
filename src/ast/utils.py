@@ -126,6 +126,8 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.EXP: '\\exp',
         TokenClass.LOG: '\\log',
         TokenClass.LN: '\\ln',
+        TokenClass.F: 'f',
+        TokenClass.G: 'g',
 
         TokenClass.DET: '\\det',
         TokenClass.DIM: '\\dim',
@@ -134,8 +136,6 @@ def _getConstantSymbolsToLaTeX():
         TokenClass.LCM: '\\text{lcm}',
         TokenClass.MIN: '\\min',
         TokenClass.MAX: '\\max',
-        TokenClass.F: 'f',
-        TokenClass.G: 'g',
     }
 
 

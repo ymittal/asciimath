@@ -96,6 +96,27 @@ class UnaryOp(ASTNode):
         return self.expr.resizeBrackets()
 
 
+class InvertibleFunc(ASTNode):
+    TO_LATEX = utils._getConstantSymbolsToLaTeX()
+
+    def __init__(self, tokenClass, expr, power=None):
+        self.tokenClass = tokenClass
+        self.expr = self.stripBrackets(expr)
+        self.power = self.stripBrackets(power)
+
+    def __str__(self):
+        funcStr = self.TO_LATEX.get(self.tokenClass, '')
+        if self.power:
+            return '%s^{%s}%s' % (funcStr,
+                                  str(self.power),
+                                  str(self.expr))
+        else:
+            return '%s\,%s' % (funcStr, str(self.expr))
+
+    def resizeBrackets(self):
+        return self.expr.resizeBrackets()
+
+
 class BinaryOp(ASTNode):
 
     def __init__(self, expr1, expr2):

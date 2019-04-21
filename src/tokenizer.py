@@ -159,17 +159,18 @@ class TokenClass(Enum):
     EXP = 814
     LOG = 815
     LN = 816
-    DET = 817
-    DIM = 818
-    MOD = 819
-    GCD = 820
-    LCM = 821
-    # LUB = 822
-    # GLB = 823
-    MIN = 824
-    MAX = 825
-    F = 826
-    G = 827
+    F = 817
+    G = 818
+
+    DET = 850
+    DIM = 851
+    MOD = 852
+    GCD = 853
+    LCM = 854
+    # LUB = 855
+    # GLB = 856
+    MIN = 857
+    MAX = 858
 
     # multiline commands and matrices
     MULTILINE = 900
@@ -213,6 +214,10 @@ class TokenClass(Enum):
     @staticmethod
     def getExplanations():
         return TokenClass._getWithin(950, 1000)
+
+    @staticmethod
+    def getInvertibleFunctions():
+        return TokenClass._getWithin(800, 820)
 
 
 class Token:
