@@ -48,7 +48,52 @@ class TestParser(unittest.TestCase):
         self.compare('delta', '\\delta')
         self.compare('Delta', '\\Delta')
 
-    def testBlankMultiline(self):
+    def testEmptyMatrix(self):
+        # an empty column
+        input = '[[], []]'
+        expected = dedent('''
+            \\begin{bmatrix}
+            \t\\\\
+            \t\\\\
+            \\end{bmatrix}
+        ''').strip()
+        self.compare(input, expected)
+
+        # empty row
+        input = '[[,]]'
+        expected = dedent('''
+            \\begin{bmatrix}
+            \t & \\\\
+            \\end{bmatrix}
+        ''').strip()
+        self.compare(input, expected)
+
+    def testMatrix(self):
+        input = '[[1,2,3], [x/y, sin x]]'
+        expected = dedent('''
+            \\begin{bmatrix}
+            \t1 & 2 & 3\\\\
+            \t\\frac{x}{y} & \\sin\,x\\\\
+            \\end{bmatrix}
+        ''').strip()
+        self.compare(input, expected)
+
+        # not a matrix/vector
+        self.compare('[]', '[]')
+
+    def testNestedMatrix(self):
+        input = '[[ 1, [[ 2, 3], [4, 5]] ]]'
+        expected = dedent('''
+            \\begin{bmatrix}
+            \t1 & \\begin{bmatrix}
+            \t2 & 3\\\\
+            \t4 & 5\\\\
+            \\end{bmatrix}\\\\
+            \\end{bmatrix}
+        ''').strip()
+        self.compare(input, expected)
+
+    def testEmptyMultilineCommands(self):
         input = 'multiline(;;)end'
         expected = dedent('''
             \\begin{align}
@@ -98,8 +143,38 @@ class TestParser(unittest.TestCase):
         self.compare(input, expected)
 
     def testCases(self):
-        # system keyword
-        pass
+        input = 'x = cases(;;) 1 if x = 0;; 0 otherwise;; end'
+        expected = dedent('''
+            x = \\begin{cases}
+            \t1 && \\text{if } x = 0\\\\
+            \t0 && \\text{otherwise }
+            \\end{cases}
+        ''').strip()
+        self.compare(input, expected)
+
+        # input with line breaks
+        input = dedent('''
+            x = cases:
+                1 if x = 0
+                0 otherwise
+        ''').strip()
+        expected = dedent('''
+            x = \\begin{cases}
+            \t1 && \\text{if } x = 0\\\\
+            \t0 && \\text{otherwise }
+            \\end{cases}
+        ''').strip()
+        self.compare(input, expected)
+
+        # system (keyword) of equations
+        input = 'system(;;) x + y = 2;; x - y = 3;;end'
+        expected = dedent('''
+            \\begin{cases}
+            \tx + y & = 2\\\\
+            \tx - y & = 3
+            \\end{cases}
+        ''').strip()
+        self.compare(input, expected)
 
 
 if __name__ == '__main__':
