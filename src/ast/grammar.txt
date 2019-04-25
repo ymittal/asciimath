@@ -9,7 +9,7 @@ binary ::= frac | root
 InvertFunc ::= sin | cos | tan | sec | csc | cot |
                arcsin | arccos | arctan |
                sinh | cosh | tanh |
-               exp | log | ln | f | g
+               exp | log (_E)? | ln | f | g
 
 matrix ::= \[ (\[ [E,]* [E] \])* (\[ [E,]* [E] \]) \]
 

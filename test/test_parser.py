@@ -21,18 +21,18 @@ class TestParser(unittest.TestCase):
         self.compare('root(x)(y)', '\\sqrt[x]{y}')
 
     def testInvertibleFunctions(self):
-        self.compare('sin x', '\\sin\,x')
-        self.compare('cos((x))', '\\cos\,(x)')
+        self.compare('sin x', '\\sin x')
+        self.compare('cos(x)', '\\cos(x)')
         self.compare('tan^-1 x', '\\tan^{-1} x')
         self.compare('exp^{2}x', '\\exp^{2} x')
 
     def testLogFuncInvertible(self):
-        self.compare('log x', '\\log\,x')
-        self.compare('log_2 x', '\\log_{2}\,x')
+        self.compare('log x', '\\log x')
+        self.compare('log_2 x', '\\log_{2} x')
         self.compare('log^-1 x', '\\log^{-1} x')
         self.compare('log_2^{y} x', '\\log_{2}^{y} x')
         self.compare('log_{2}^{y} x', '\\log_{2}^{y} x')
-        self.compare('log_10(2)', '\\log_{10}\,2')
+        self.compare('log_10(2)', '\\log_{10}(2)')
 
     def testBrackets(self):
         self.compare('(x){y}', '(x) \\{y\\}')
@@ -42,7 +42,7 @@ class TestParser(unittest.TestCase):
 
         # Invertible funcs
         self.compare('(sin^-1 x)', '\\left(\\sin^{-1} x\\right)')
-        self.compare('(sin x)', '(\\sin\,x)')
+        self.compare('(sin x)', '(\\sin x)')
 
     def testDeeVar(self):
         self.compare('d theta', 'd\\theta')
@@ -86,7 +86,7 @@ class TestParser(unittest.TestCase):
         expected = dedent('''
             \\begin{bmatrix}
             \t1 & 2 & 3\\\\
-            \t\\frac{x}{y} & \\sin\,x\\\\
+            \t\\frac{x}{y} & \\sin x\\\\
             \\end{bmatrix}
         ''').strip()
         self.compare(input, expected)
