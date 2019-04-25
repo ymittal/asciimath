@@ -139,12 +139,25 @@ class Parser:
         elif self.accept(*TokenClass.getInvertibleFunctions()):
             funcClass = self.token.tokenClass
             self.consumeToken()
+
+            base = None
+            if funcClass == TokenClass.LOG:
+                if self.accept(TokenClass.UNDERSCORE):
+                    self.consumeToken()
+                    base = self.parseSimpleExpr()
+
             power = None
             if self.accept(TokenClass.CARAT):
                 self.consumeToken()
-                power = self.parseExpr()
+                power = self.parseSimpleExpr()
+
             expr = self.parseExpr()
-            return node.InvertibleFunc(funcClass, expr, power)
+            if funcClass == TokenClass.LOG:
+                return node.LogFunc(funcClass, expr,
+                                    power=power, base=base)
+            else:
+                return node.InvertibleFunc(funcClass, expr,
+                                           power=power)
 
         elif self.accept(TokenClass.FRAC, TokenClass.ROOT):
             return self.parseBinarySymbols()
@@ -288,6 +301,6 @@ def convertToLaTeX(string):
 
 if __name__ == '__main__':
     # string = '''cases(;;)x + y >= 2 otherwise;;end'''
-    string = 'dy/d theta'
+    string = 'sum_{x}^{y}'
     preprocessed = transform_environment(string)
     print(convertToLaTeX(preprocessed))

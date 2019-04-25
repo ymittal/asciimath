@@ -116,14 +116,33 @@ class InvertibleFunc(ASTNode):
     def __str__(self):
         funcStr = self.TO_LATEX.get(self.tokenClass, '')
         if self.power:
-            return '%s^{%s}%s' % (funcStr,
-                                  str(self.power),
-                                  str(self.expr))
+            return '%s^{%s} %s' % (funcStr,
+                                   str(self.power),
+                                   str(self.expr))
         else:
             return '%s\,%s' % (funcStr, str(self.expr))
 
     def resizeBrackets(self):
         return True if self.power else self.expr.resizeBrackets()
+
+
+class LogFunc(InvertibleFunc):
+
+    def __init__(self, tokenClass, expr, power=None, base=None):
+        super(LogFunc, self).__init__(tokenClass, expr, power)
+        self.base = self.stripBrackets(base)
+
+    def __str__(self):
+        baseStr = ''
+        if self.base:
+            baseStr = '_{%s}' % str(self.base)
+
+        powerStr = '\,'
+        if self.power:
+            powerStr = '^{%s} ' % str(self.power)
+
+        return '\\log%s%s%s' % (baseStr, powerStr,
+                                str(self.expr))
 
 
 class BinaryOp(ASTNode):

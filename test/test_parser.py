@@ -23,8 +23,15 @@ class TestParser(unittest.TestCase):
     def testInvertibleFunctions(self):
         self.compare('sin x', '\\sin\,x')
         self.compare('cos((x))', '\\cos\,(x)')
-        self.compare('tan^-1 x', '\\tan^{-1}x')
-        self.compare('exp^{2}x', '\\exp^{2}x')
+        self.compare('tan^-1 x', '\\tan^{-1} x')
+        self.compare('exp^{2}x', '\\exp^{2} x')
+
+    def testLogFuncInvertible(self):
+        self.compare('log x', '\\log\,x')
+        self.compare('log_2 x', '\\log_{2}\,x')
+        self.compare('log^-1 x', '\\log^{-1} x')
+        self.compare('log_2^{y} x', '\\log_{2}^{y} x')
+        self.compare('log_{2}^{y} x', '\\log_{2}^{y} x')
 
     def testBrackets(self):
         self.compare('(x){y}', '(x) \\{y\\}')
@@ -33,7 +40,7 @@ class TestParser(unittest.TestCase):
         self.compare('(frac x y)', '\\left(\\frac{x}{y}\\right)')
 
         # Invertible funcs
-        self.compare('(sin^-1 x)', '\\left(\\sin^{-1}x\\right)')
+        self.compare('(sin^-1 x)', '\\left(\\sin^{-1} x\\right)')
         self.compare('(sin x)', '(\\sin\,x)')
 
     def testDeeVar(self):
