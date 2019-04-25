@@ -32,6 +32,7 @@ class TestParser(unittest.TestCase):
         self.compare('log^-1 x', '\\log^{-1} x')
         self.compare('log_2^{y} x', '\\log_{2}^{y} x')
         self.compare('log_{2}^{y} x', '\\log_{2}^{y} x')
+        self.compare('log_10(2)', '\\log_{10}\,2')
 
     def testBrackets(self):
         self.compare('(x){y}', '(x) \\{y\\}')
