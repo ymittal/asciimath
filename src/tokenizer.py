@@ -187,6 +187,7 @@ class TokenClass(Enum):
 
     EOF = 1000
     INVALID = 1001
+    SPACE = 1002
 
     @staticmethod
     def _getWithin(start, end):
@@ -384,7 +385,7 @@ class Tokenizer:
         if char is None:
             raise EOFError()
         elif char.isspace():
-            return self.next()
+            return Token(TokenClass.SPACE)
 
         if char.isalpha():
             string = [char]

@@ -25,18 +25,25 @@ class Parser:
             res |= (self.token.tokenClass == arg)
         return res
 
-    def consumeToken(self):
+    def consumeToken(self, ignoreSpaces=True):
         if len(self.buffer):
             self.token = self.buffer.popleft()
         else:
             self.token = self.tokenizer.nextToken()
+            if not ignoreSpaces:
+                while self.token.tokenClass != TokenClass.SPACE:
+                    self.token = self.tokenizer.nextToken()
 
-    def lookAhead(self, k):
+    def lookAhead(self, k, ignoreSpaces=True):
         assert k >= 1
 
         while len(self.buffer) < k:
             newToken = self.tokenizer.nextToken()
             self.buffer.append(newToken)
+            if not ignoreSpaces:
+                while self.token.tokenClass != TokenClass.SPACE:
+                    newToken = self.tokenizer.nextToken()
+                    self.buffer.append(newToken)
 
         return self.buffer[k - 1]
 
